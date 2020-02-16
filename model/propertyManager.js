@@ -26,23 +26,28 @@ class PropertyManager{
     }
 
     getArea(property){
-        return this.property.area(property);
+        const area = this.property.area(property);
+        return JSON.stringify({ area : area });
     }
 
     getProduct(property){
-        return this.property.product(property);
+        const product = this.property.product(property);
+        return JSON.stringify({ product : product });
     }
 
     getAllSpendings(property){
-        return this.property.spendings(property);
+        const spendings = this.property.spendings(property);
+        return JSON.stringify({ spendings : spendings});
     }
 
     getImplicitCosts(property){
-        return this.property.implicitCosts(property);
+        const implicitCosts = this.property.implicitCosts(property);
+        return JSON.stringify({ implicitCosts : implicitCosts });
     }
 
     getProfit(property){
-        return this.property.profit(property);
+        const profit = this.property.profit(property);
+        return JSON.stringify({ profit : profit });
     }
 
 
