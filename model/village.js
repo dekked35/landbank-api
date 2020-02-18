@@ -112,7 +112,7 @@ class Village {
         const spendings = this.spendings(property);
 
         const costLand = (property.product_input.user_1flr_size + property.product_input.user_2flr_size + property.product_input.user_3flr_size) * spendings.costDevelopDone;
-        const costAdvtAndEmployee = spendings.costAdvtOnePer + property.spendings_input.salaryEmployee;
+        const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
 
         const implicitCosts = {
             sellAreaSize : area.sellArea,
