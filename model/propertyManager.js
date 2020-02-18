@@ -27,27 +27,27 @@ class PropertyManager{
 
     getArea(property){
         const area = this.property.area(property);
-        return JSON.stringify({ area : area });
+        return JSON.parse(JSON.stringify({ area : area }));
     }
 
     getProduct(property){
         const product = this.property.product(property);
-        return JSON.stringify({ product : product });
+        return JSON.parse(JSON.stringify({ product : product }));
     }
 
     getAllSpendings(property){
         const spendings = this.property.spendings(property);
-        return JSON.stringify({ spendings : spendings});
+        return JSON.parse(JSON.stringify({ spendings : spendings}));
     }
 
     getImplicitCosts(property){
         const implicitCosts = this.property.implicitCosts(property);
-        return JSON.stringify({ implicitCosts : implicitCosts });
+        return JSON.parse(JSON.stringify({ implicitCosts : implicitCosts }));
     }
 
     getProfit(property){
         const profit = this.property.profit(property);
-        return JSON.stringify({ profit : profit });
+        return JSON.parse(JSON.stringify({ profit : profit }));
     }
 
 
