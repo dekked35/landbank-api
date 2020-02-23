@@ -2,14 +2,16 @@ class Townhouse{
     constructor(){}
 
     area(property){
-        const fenceLength = 3.14 * ((Math.sqrt(property.area_input.totalArea * 4)/(22/7))) * 2;
-        const sellArea = property.area_input.totalArea * 0.65;
-        const roadSize = property.area_input.totalArea * 0.3;
-        const greenArea = property.area_input.totalArea * 0.05;
+        const areaInput = property.area_input;
+
+        const fenceLength = 3.14 * ((Math.sqrt(areaInput.totalArea * 4)/(22/7))) * 2;
+        const sellArea = areaInput.totalArea * 0.65;
+        const roadSize = areaInput.totalArea * 0.3;
+        const greenArea = areaInput.totalArea * 0.05;
         const area = {
-            farValue : property.area_input.farValue,
-            osrValue : property.area_input.osrValue,
-            totalArea : property.area_input.totalArea,
+            farValue : areaInput.farValue,
+            osrValue : areaInput.osrValue,
+            totalArea : areaInput.totalArea,
             fenceLength : fenceLength,
             sellArea : sellArea,
             roadSize : roadSize,
