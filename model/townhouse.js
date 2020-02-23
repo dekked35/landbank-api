@@ -7,7 +7,9 @@ class Townhouse{
         const roadSize = property.area_input.totalArea * 0.3;
         const greenArea = property.area_input.totalArea * 0.05;
         const area = {
-            totalArea : 1000,
+            farValue : property.area_input.farValue,
+            osrValue : property.area_input.osrValue,
+            totalArea : property.area_input.totalArea,
             fenceLength : fenceLength,
             sellArea : sellArea,
             roadSize : roadSize,
