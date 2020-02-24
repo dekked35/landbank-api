@@ -130,15 +130,19 @@ class Village {
         const costTwoFloorConstruction = userProductInput[1].area * spendingsInput.costConstructionLivingSpace
         const costThreeFloorConstruction = userProductInput[1].area * spendingsInput.costConstructionLivingSpace
         
+        const duration = this.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
         const costTwoFloorConstructionTotal = costTwoFloorConstruction * userProduct[1].quantity;
         const costThreeFloorConstructionTotal = costThreeFloorConstruction * userProduct[2].quantity;
-
-        const salaryEmployee = spendingsInput.sellPeriod * spendingsInput.salaryEmployee;
+        const salaryEmployee = duration * spendingsInput.salaryEmployee;
         const costAdvtOnePer = product.user.totalCost * 0.01;
-        const costAdvt = costAdvtOnePer * spendingsInput.sellPeriod;
+        const costAdvt = costAdvtOnePer * duration;
 
         const spendings = {
+            priceLandBought : spendingsInput.priceLandBought,
+            costConstructionLivingSpace : spendingsInput.costConstructionLivingSpace,
+            costOther : spendingsInput.costOther,
+            costPlan : spendingsInput.costPlan,
             costDevelopRoad : costDevelopRoad,
             costRoadCover : costRoadCover,
             costTapWater : costTapWater,
@@ -149,15 +153,30 @@ class Village {
             costDevelopLand : costDevelopLand,
             costInProject : costInProject,
             costDevelopDone : costDevelopDone,
-            costOneFloorConstruction : costOneFloorConstruction,
-            costTwoFloorConstruction : costTwoFloorConstruction,
-            costThreeFloorConstruction : costThreeFloorConstruction,
-            user_1flr_quantity : userProduct[0].quantity,
-            user_2flr_quantity : userProduct[1].quantity,
-            user_3flr_quantity : userProduct[2].quantity,
-            costOneFloorConstructionTotal : costOneFloorConstructionTotal,
-            costTwoFloorConstructionTotal : costTwoFloorConstructionTotal,
-            costThreeFloorConstructionTotal : costThreeFloorConstructionTotal,
+            costConstructionPerItem : [
+                {
+                    type : "single floor house",
+                    costPerItem: costOneFloorConstruction,
+                    quantity : userProduct[0].quantity,
+                    total : costOneFloorConstructionTotal
+                },
+                {
+                    type : "two floor house",
+                    costPerItem: costTwoFloorConstruction,
+                    quantity : userProduct[1].quantity,
+                    total : costTwoFloorConstructionTotal
+                },
+                {
+                    type : "three floor house",
+                    costPerItem: costThreeFloorConstruction,
+                    quantity : userProduct[2].quantity,
+                    total : costThreeFloorConstructionTotal
+                }
+            ],
+            periodSellStart : spendingsInput.periodSellStart,
+            periodSellEnd : spendingsInput.periodSellEnd,
+            sellPeriod : duration,
+            noEmployee : spendingsInput.noEmployee,
             salaryEmployee : salaryEmployee,
             costAdvtOnePer : costAdvtOnePer,
             costAdvt : costAdvt
@@ -191,13 +210,14 @@ class Village {
         const spendings = this.spendings(property);
         const userProduct = product.user.products;
         const spendingsInput = property.spendings_input;
+        const buildingCost = spendings.costConstructionPerItem;
 
         const oneFloorLandCost = userProduct[0].size * spendings.costDevelopDone;
         const twoFloorLandCost = userProduct[1].size * spendings.costDevelopDone;
         const threeFloorLandCost = userProduct[2].size * spendings.costDevelopDone;
-        const singleOneFloorCost = spendings.costOneFloorConstruction + oneFloorLandCost + spendingsInput.costOther;
-        const singleTwoFloorCost = spendings.costTwoFloorConstruction + twoFloorLandCost + spendingsInput.costOther;
-        const singleThreeFloorCost = spendings.costThreeFloorConstruction + threeFloorLandCost + spendingsInput.costOther;
+        const singleOneFloorCost = buildingCost[0].costPerItem + oneFloorLandCost + spendingsInput.costOther;
+        const singleTwoFloorCost = buildingCost[1].costPerItem + twoFloorLandCost + spendingsInput.costOther;
+        const singleThreeFloorCost = buildingCost[2].costPerItem + threeFloorLandCost + spendingsInput.costOther;
         const singleOneFloorProfit = userProduct[0].cost - singleOneFloorCost;
         const singleTwoFloorProfit = userProduct[1].cost - singleTwoFloorCost;
         const singleThreeFloorProfit = userProduct[2].cost - singleThreeFloorCost;
@@ -209,21 +229,39 @@ class Village {
         const averageProfitPerHouse = netProfit/ product.user.totalQuantity
 
         const profit = {
-            singleOneFloorProfit : singleOneFloorProfit,
-            singleTwoFloorProfit : singleTwoFloorProfit,
-            singleThreeFloorProfit : singleThreeFloorProfit,
-            user_1flr_quantity : userProduct[0].quantity,
-            user_2flr_quantity : userProduct[1].quantity,
-            user_3flr_quantity : userProduct[2].quantity,
-            totalOneFloorProfit : totalOneFloorProfit,
-            totalTwoFloorProfit : totalTwoFloorProfit,
-            totalThreeFloorProfit : totalThreeFloorProfit,
+            profitPerItems : [
+                {
+                    type : "single floor house",
+                    profitPerItem : singleOneFloorProfit,
+                    noItem : 0,
+                    totalProfit : totalOneFloorProfit
+                },
+                {
+                    type : "two floor house",
+                    profitPerItem : singleTwoFloorProfit,
+                    noItem : 0,
+                    totalProfit : totalTwoFloorProfit
+                },
+                {
+                    type : "three floor house",
+                    profitPerItem : singleThreeFloorProfit,
+                    noItem : 0,
+                    totalProfit : totalThreeFloorProfit
+                }
+            ],
             totalProfit : totalProfit,
             netProfit : netProfit,
             averageProfitPerHouse : averageProfitPerHouse
         };
 
         return profit;
+    }
+
+    duration(firstDate, lastDate){
+        const start = new Date(firstDate);
+        const end = new Date(lastDate);
+        const duration = (end.getTime() - start.getTime()) / (1000 * 3600 * 24);
+        return duration;
     }
 }
 
