@@ -7,9 +7,9 @@ class Condo{
             farValue : property.area_input.farValue,
             osrValue : property.area_input.osrValue,
             totalArea : property.area_input.totalArea,
-            hallway : property.area_input.hallway,
-            clubhouse_hallway : property.area_input.clubhouse_hallway,
             availableArea : availableArea,
+            hallway : property.area_input.hallway,
+            clubhouse_hallway : property.area_input.clubhouse_hallway
         };
 
         return area;
