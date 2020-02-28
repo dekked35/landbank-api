@@ -1,3 +1,6 @@
+const Util = require("../util/util");
+const util = new Util();
+
 class Village {
     constructor() {}
 
@@ -22,9 +25,18 @@ class Village {
     }
 
     product(property){
+        const competitorProduct = this.competitorProduct(property);
+        const userProduct = this.userProduct(property);
+        const product = {
+            competitor: competitorProduct.competitor,
+            user: userProduct.user
+        }
+        return product;
+    }
+
+    competitorProduct(property){
         const area = this.area(property);
         const competitorProductInput = property.product_input.competitor.products;
-        const userProductInput = property.product_input.user.products;
 
         const competitorOneFloorQty = parseInt(((competitorProductInput[0].ratio/100) * area.sellArea)/competitorProductInput[0].size);
         const competitorTwoFloorQty = parseInt(((competitorProductInput[1].ratio/100) * area.sellArea)/competitorProductInput[1].size);
@@ -34,15 +46,7 @@ class Village {
                                         (competitorTwoFloorQty * competitorProductInput[1].cost) + 
                                         (competitorThreeFloorQty * competitorProductInput[2].cost);
 
-        const userOneFloorQty = parseInt(((userProductInput[0].ratio/100) * area.sellArea)/userProductInput[0].size);
-        const userTwoFloorQty = parseInt(((userProductInput[1].ratio/100) * area.sellArea)/userProductInput[1].size);
-        const userThreeFloorQty = parseInt(((userProductInput[2].ratio/100) * area.sellArea)/userProductInput[2].size);
-        const userAllFloorQty = userOneFloorQty + userTwoFloorQty + userThreeFloorQty;
-        const userTotalCost = (userOneFloorQty * userProductInput[0].cost) + 
-                                (userTwoFloorQty * userProductInput[1].cost) + 
-                                (userThreeFloorQty * userProductInput[2].cost);
-
-        const product = {
+        const competitorProduct = {
             competitor : {
                 products: [
                     {
@@ -67,12 +71,30 @@ class Village {
                         area : competitorProductInput[2].area,
                         cost : competitorProductInput[2].cost,
                         ratio : competitorProductInput[2].ratio,
-                        quantity : competitorTwoFloorQty
+                        quantity : competitorThreeFloorQty
                     }
                 ],
                 totalQuantity: competitorAllFloorQty,
                 totalCost: competitorTotalCost
-            },
+            }
+        }
+
+        return competitorProduct;
+    }
+
+    userProduct(property){
+        const area = this.area(property);
+        const userProductInput = property.product_input.user.products;
+
+        const userOneFloorQty = parseInt(((userProductInput[0].ratio/100) * area.sellArea)/userProductInput[0].size);
+        const userTwoFloorQty = parseInt(((userProductInput[1].ratio/100) * area.sellArea)/userProductInput[1].size);
+        const userThreeFloorQty = parseInt(((userProductInput[2].ratio/100) * area.sellArea)/userProductInput[2].size);
+        const userAllFloorQty = userOneFloorQty + userTwoFloorQty + userThreeFloorQty;
+        const userTotalCost = (userOneFloorQty * userProductInput[0].cost) + 
+                                (userTwoFloorQty * userProductInput[1].cost) + 
+                                (userThreeFloorQty * userProductInput[2].cost);
+
+        const userProduct = {
             user :{
                 products: [
                     {
@@ -105,12 +127,12 @@ class Village {
             } 
         }
 
-        return product;
+        return userProduct;
     }
 
     spendings(property){
         const area = this.area(property);
-        const product = this.product(property);
+        const product = this.userProduct(property);
         const spendingsInput = property.spendings_input;
 
         const userProductInput = property.product_input.user.products;
@@ -130,7 +152,7 @@ class Village {
         const costTwoFloorConstruction = userProductInput[1].area * spendingsInput.costConstructionLivingSpace
         const costThreeFloorConstruction = userProductInput[1].area * spendingsInput.costConstructionLivingSpace
         
-        const duration = this.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
+        const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
         const costTwoFloorConstructionTotal = costTwoFloorConstruction * userProduct[1].quantity;
         const costThreeFloorConstructionTotal = costThreeFloorConstruction * userProduct[2].quantity;
@@ -187,7 +209,7 @@ class Village {
 
     implicitCosts(property){
         const area = this.area(property);
-        const product = this.product(property);
+        const product = this.userProduct(property);
         const spendings = this.spendings(property);
         const userProductInput = property.product_input.user.products
 
@@ -206,7 +228,7 @@ class Village {
     }
 
     profit(property){
-        const product = this.product(property);
+        const product = this.userProduct(property);
         const spendings = this.spendings(property);
         const userProduct = product.user.products;
         const spendingsInput = property.spendings_input;
@@ -255,13 +277,6 @@ class Village {
         };
 
         return profit;
-    }
-
-    duration(firstDate, lastDate){
-        const start = new Date(firstDate);
-        const end = new Date(lastDate);
-        const duration = (end.getTime() - start.getTime()) / (1000 * 3600 * 24);
-        return duration;
     }
 }
 
