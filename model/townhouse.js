@@ -1,3 +1,6 @@
+const Util = require("../util/util");
+const util = new Util();
+
 class Townhouse{
     constructor(){}
 
@@ -54,6 +57,82 @@ class Townhouse{
         };
 
         return product;
+    }
+
+    userProduct(property){
+        const area = this.area(property);
+        const productInput = property.product_input.user.products;
+
+        
+
+        // const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
+        // const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
+        // const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.sellArea)/productInput[2].size);
+        // const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
+        // const totalCost =   (oneFloorQty * productInput[0].cost) + 
+        //                     (twoFloorQty * productInput[1].cost) + 
+        //                     (threeFloorQty * productInput[2].cost);
+
+        const userProduct = {
+            user : {
+                products: [
+                    {
+                        type : "two floor house",
+                        size : productInput[0].size,
+                        area : productInput[0].area,
+                        cost : productInput[0].cost,
+                        ratio : productInput[0].ratio,
+                        quantity : oneFloorQty
+                    },
+                    {
+                        type : "three floor house",
+                        size : productInput[1].size,
+                        area : productInput[1].area,
+                        cost : productInput[1].cost,
+                        ratio : productInput[1].ratio,
+                        quantity : twoFloorQty
+                    },
+                    {
+                        type : "four floor house",
+                        size : productInput[2].size,
+                        area : productInput[2].area,
+                        cost : productInput[2].cost,
+                        ratio : productInput[2].ratio,
+                        quantity : threeFloorQty
+                    }
+                ],
+                totalQuantity : totalFloorQty,
+                totalCost : totalCost
+            } ,
+            totalWidth : [
+                {
+                    type : "4 metres wide",
+                    informations : [
+                        { type : "two floor house", quantity : 0},
+                        { type : "three floor house", quantity : 0},
+                        { type : "four floor house", quantity : 0},
+                    ]
+                },
+                {
+                    type : "5 metres wide",
+                    informations : [
+                        { type : "two floor house", quantity : 0},
+                        { type : "three floor house", quantity : 0},
+                        { type : "four floor house", quantity : 0},
+                    ]
+                },
+                {
+                    type : "6 metres wide",
+                    informations : [
+                        { type : "two floor house", quantity : 0},
+                        { type : "three floor house", quantity : 0},
+                        { type : "four floor house", quantity : 0},
+                    ]
+                }
+            ]
+        }
+
+        return userProduct;
     }
 
     spendings(property){

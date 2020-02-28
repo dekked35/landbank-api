@@ -28,54 +28,54 @@ class Village {
         const competitorProduct = this.competitorProduct(property);
         const userProduct = this.userProduct(property);
         const product = {
-            competitor: competitorProduct.competitor,
-            user: userProduct.user
+            competitor : competitorProduct.competitor,
+            user : userProduct.user
         }
         return product;
     }
 
     competitorProduct(property){
         const area = this.area(property);
-        const competitorProductInput = property.product_input.competitor.products;
+        const productInput = property.product_input.competitor.products;
 
-        const competitorOneFloorQty = parseInt(((competitorProductInput[0].ratio/100) * area.sellArea)/competitorProductInput[0].size);
-        const competitorTwoFloorQty = parseInt(((competitorProductInput[1].ratio/100) * area.sellArea)/competitorProductInput[1].size);
-        const competitorThreeFloorQty = parseInt(((competitorProductInput[2].ratio/100) * area.sellArea)/competitorProductInput[2].size);
-        const competitorAllFloorQty = competitorOneFloorQty + competitorTwoFloorQty + competitorThreeFloorQty;
-        const competitorTotalCost =   (competitorOneFloorQty * competitorProductInput[0].cost) + 
-                                        (competitorTwoFloorQty * competitorProductInput[1].cost) + 
-                                        (competitorThreeFloorQty * competitorProductInput[2].cost);
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.sellArea)/productInput[2].size);
+        const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
+        const totalCost =   (oneFloorQty * productInput[0].cost) + 
+                            (twoFloorQty * productInput[1].cost) + 
+                            (threeFloorQty * productInput[2].cost);
 
         const competitorProduct = {
             competitor : {
                 products: [
                     {
                         type : "single floor house",
-                        size : competitorProductInput[0].size,
-                        area : competitorProductInput[0].area,
-                        cost : competitorProductInput[0].cost,
-                        ratio : competitorProductInput[0].ratio,
-                        quantity : competitorOneFloorQty 
+                        size : productInput[0].size,
+                        area : productInput[0].area,
+                        cost : productInput[0].cost,
+                        ratio : productInput[0].ratio,
+                        quantity : oneFloorQty 
                     },
                     {
                         type : "two floor house",
-                        size : competitorProductInput[1].size,
-                        area : competitorProductInput[1].area,
-                        cost : competitorProductInput[1].cost,
-                        ratio : competitorProductInput[1].ratio,
-                        quantity : competitorTwoFloorQty
+                        size : productInput[1].size,
+                        area : productInput[1].area,
+                        cost : productInput[1].cost,
+                        ratio : productInput[1].ratio,
+                        quantity : twoFloorQty
                     },
                     {
                         type : "three floor house",
-                        size : competitorProductInput[2].size,
-                        area : competitorProductInput[2].area,
-                        cost : competitorProductInput[2].cost,
-                        ratio : competitorProductInput[2].ratio,
-                        quantity : competitorThreeFloorQty
+                        size : productInput[2].size,
+                        area : productInput[2].area,
+                        cost : productInput[2].cost,
+                        ratio : productInput[2].ratio,
+                        quantity : threeFloorQty
                     }
                 ],
-                totalQuantity: competitorAllFloorQty,
-                totalCost: competitorTotalCost
+                totalQuantity: totalFloorQty,
+                totalCost: totalCost
             }
         }
 
@@ -84,46 +84,46 @@ class Village {
 
     userProduct(property){
         const area = this.area(property);
-        const userProductInput = property.product_input.user.products;
+        const productInput = property.product_input.user.products;
 
-        const userOneFloorQty = parseInt(((userProductInput[0].ratio/100) * area.sellArea)/userProductInput[0].size);
-        const userTwoFloorQty = parseInt(((userProductInput[1].ratio/100) * area.sellArea)/userProductInput[1].size);
-        const userThreeFloorQty = parseInt(((userProductInput[2].ratio/100) * area.sellArea)/userProductInput[2].size);
-        const userAllFloorQty = userOneFloorQty + userTwoFloorQty + userThreeFloorQty;
-        const userTotalCost = (userOneFloorQty * userProductInput[0].cost) + 
-                                (userTwoFloorQty * userProductInput[1].cost) + 
-                                (userThreeFloorQty * userProductInput[2].cost);
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.sellArea)/productInput[2].size);
+        const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
+        const totalCost =   (oneFloorQty * productInput[0].cost) + 
+                            (twoFloorQty * productInput[1].cost) + 
+                            (threeFloorQty * productInput[2].cost);
 
         const userProduct = {
-            user :{
+            user : {
                 products: [
                     {
                         type : "single floor house",
-                        size : userProductInput[0].size,
-                        area : userProductInput[0].area,
-                        cost : userProductInput[0].cost,
-                        ratio : userProductInput[0].ratio,
-                        quantity : userOneFloorQty
+                        size : productInput[0].size,
+                        area : productInput[0].area,
+                        cost : productInput[0].cost,
+                        ratio : productInput[0].ratio,
+                        quantity : oneFloorQty
                     },
                     {
                         type : "two floor house",
-                        size : userProductInput[1].size,
-                        area : userProductInput[1].area,
-                        cost : userProductInput[1].cost,
-                        ratio : userProductInput[1].ratio,
-                        quantity : userTwoFloorQty
+                        size : productInput[1].size,
+                        area : productInput[1].area,
+                        cost : productInput[1].cost,
+                        ratio : productInput[1].ratio,
+                        quantity : twoFloorQty
                     },
                     {
                         type : "three floor house",
-                        size : userProductInput[2].size,
-                        area : userProductInput[2].area,
-                        cost : userProductInput[2].cost,
-                        ratio : userProductInput[2].ratio,
-                        quantity : userThreeFloorQty
+                        size : productInput[2].size,
+                        area : productInput[2].area,
+                        cost : productInput[2].cost,
+                        ratio : productInput[2].ratio,
+                        quantity : threeFloorQty
                     }
                 ],
-                totalQuantity : userAllFloorQty,
-                totalCost : userTotalCost
+                totalQuantity : totalFloorQty,
+                totalCost : totalCost
             } 
         }
 
@@ -135,7 +135,7 @@ class Village {
         const product = this.userProduct(property);
         const spendingsInput = property.spendings_input;
 
-        const userProductInput = property.product_input.user.products;
+        const productInput = property.product_input.user.products;
         const userProduct = product.user.products;
 
         const costDevelopRoad = area.greenArea * 1250 * 4;
@@ -148,9 +148,9 @@ class Village {
         const costDevelopLand = spendingsInput.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
         const costDevelopDone = costInProject/area.sellArea
-        const costOneFloorConstruction = userProductInput[0].area * spendingsInput.costConstructionLivingSpace
-        const costTwoFloorConstruction = userProductInput[1].area * spendingsInput.costConstructionLivingSpace
-        const costThreeFloorConstruction = userProductInput[1].area * spendingsInput.costConstructionLivingSpace
+        const costOneFloorConstruction = productInput[0].area * spendingsInput.costConstructionLivingSpace
+        const costTwoFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
+        const costThreeFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
         
         const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
@@ -211,9 +211,9 @@ class Village {
         const area = this.area(property);
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
-        const userProductInput = property.product_input.user.products
+        const productInput = property.product_input.user.products
 
-        const costLand = (userProductInput[0].size + userProductInput[1].size + userProductInput[2].size) * spendings.costDevelopDone;
+        const costLand = (productInput[0].size + productInput[1].size + productInput[2].size) * spendings.costDevelopDone;
         const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
 
         const implicitCosts = {
