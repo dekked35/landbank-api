@@ -63,7 +63,7 @@ class Townhouse{
         const area = this.area(property);
         const productInput = property.product_input.user.products;
 
-        
+        const twoFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
 
         // const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
         // const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
@@ -82,7 +82,7 @@ class Townhouse{
                         area : productInput[0].area,
                         cost : productInput[0].cost,
                         ratio : productInput[0].ratio,
-                        quantity : oneFloorQty
+                        quantity : twoFloorQty
                     },
                     {
                         type : "three floor house",
@@ -90,7 +90,7 @@ class Townhouse{
                         area : productInput[1].area,
                         cost : productInput[1].cost,
                         ratio : productInput[1].ratio,
-                        quantity : twoFloorQty
+                        quantity : threeFloorQty
                     },
                     {
                         type : "four floor house",
@@ -98,7 +98,7 @@ class Townhouse{
                         area : productInput[2].area,
                         cost : productInput[2].cost,
                         ratio : productInput[2].ratio,
-                        quantity : threeFloorQty
+                        quantity : fourFloorQty
                     }
                 ],
                 totalQuantity : totalFloorQty,
