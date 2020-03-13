@@ -44,15 +44,9 @@ class Hotel{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        // const totalTypeARoomArea = productInput.rooms[0].area * productInput.rooms[0].noRoom;
-        // const totalTypeBRoomArea = productInput.rooms[1].area * productInput.rooms[1].noRoom;
-        // const totalAllRoomArea = totalTypeARoomArea + totalTypeBRoomArea;
         const totalAllRoomArea = productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer);
         const roomHallway = totalAllRoomArea * 0.15;
 
-        // const poolArea = productInput.centrals[0].area * productInput.centrals[0].noRoom;
-        // const lobbyArea = productInput.centrals[1].area * productInput.centrals[1].noRoom;
-        // const totalCentralArea = poolArea + lobbyArea;
         const totalCentralArea = productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer);
         const centralHallway = totalCentralArea * 0.20;
 
@@ -103,15 +97,9 @@ class Hotel{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        // const totalTypeARoomArea = productInput.rooms[0].area * productInput.rooms[0].noRoom;
-        // const totalTypeBRoomArea = productInput.rooms[1].area * productInput.rooms[1].noRoom;
-        // const totalAllRoomArea = totalTypeARoomArea + totalTypeBRoomArea;
         const totalAllRoomArea = productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer);
         const roomHallway = totalAllRoomArea * 0.15;
 
-        // const poolArea = productInput.centrals[0].area * productInput.centrals[0].noRoom;
-        // const lobbyArea = productInput.centrals[1].area * productInput.centrals[1].noRoom;
-        // const totalCentralArea = poolArea + lobbyArea;
         const totalCentralArea = productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer);
         const centralHallway = totalCentralArea * 0.20;
 
