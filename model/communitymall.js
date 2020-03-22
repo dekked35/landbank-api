@@ -44,24 +44,24 @@ class CommunityMall{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const totalAllRoomArea = productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer);
-        const roomHallway = totalAllRoomArea * 0.15;
+        const totalAllRoomArea = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer) : 0;
+        const roomHallway = (totalAllRoomArea > 0) ? totalAllRoomArea * 0.15 : 0;
 
-        const totalCentralArea = productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer);
-        const centralHallway = totalCentralArea * 0.20;
+        const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
+        const centralHallway = (totalCentralArea > 0) ? totalCentralArea * 0.20 : 0;
 
-        const totalParkingLotArea = productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer);
-        const roadArea = totalParkingLotArea * 0.4;
+        const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
+        const roadArea = (totalParkingLotArea > 0) ? totalParkingLotArea * 0.4 : 0;
 
-        const outdoorArea = productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer);
+        const outdoorArea = (productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         
         const totalOutdoorArea = outdoorArea + roadArea;
         
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
         const totalCorridor = roomHallway + centralHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
-        const totalRoomQuantity = productInput.rooms.map(room => room.noRoom).reduce(reducer);
-        const remainingArea = (area.availableArea * 4) - usedArea;
+        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
+        const remainingArea = (area.availableArea * 4) - usedArea
 
         const competitorProduct = {
             competitor : {
@@ -97,23 +97,23 @@ class CommunityMall{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const totalAllRoomArea = productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer);
-        const roomHallway = totalAllRoomArea * 0.15;
+        const totalAllRoomArea = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer) : 0;
+        const roomHallway = (totalAllRoomArea > 0) ? totalAllRoomArea * 0.15 : 0;
 
-        const totalCentralArea = productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer);
-        const centralHallway = totalCentralArea * 0.20;
+        const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
+        const centralHallway = (totalCentralArea > 0) ? totalCentralArea * 0.20 : 0;
 
-        const totalParkingLotArea = productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer);
-        const roadArea = totalParkingLotArea * 0.4;
+        const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
+        const roadArea = (totalParkingLotArea > 0) ? totalParkingLotArea * 0.4 : 0;
 
-        const outdoorArea = productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer);
+        const outdoorArea = (productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         
         const totalOutdoorArea = outdoorArea + roadArea;
         
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
         const totalCorridor = roomHallway + centralHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
-        const totalRoomQuantity = productInput.rooms.map( room => room.noRoom).reduce(reducer);
+        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = (area.availableArea * 4) - usedArea
 
         const userProduct = {
@@ -154,66 +154,67 @@ class CommunityMall{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const newRooms = input.rooms.map(room => JSON.parse(JSON.stringify({
+        const newRooms = (input.rooms.length > 0) ? input.rooms.map(room => JSON.parse(JSON.stringify({
             type  : room.type,
             name : room.name,
             area : room.area,
             noRoom : room.noRoom,
             cost : room.cost,
             totalCost : room.area * room.noRoom * room.cost
-        })));
-        const totalRoomCost = newRooms.map(room => room.totalCost).reduce(reducer);
+        }))) : [];
+        const totalRoomCost = (newRooms.length > 0) ? newRooms.map(room => room.totalCost).reduce(reducer) : 0;
 
-        const newCentrals = input.centrals.map(facility => JSON.parse(JSON.stringify({
+        const newCentrals = (input.centrals.length > 0) ? input.centrals.map(facility => JSON.parse(JSON.stringify({
             type  : facility.type,
             name : facility.name,
             area : facility.area,
             noRoom : facility.noRoom,
             cost : facility.cost,
             totalCost : facility.area * facility.noRoom * facility.cost
-        })));
-        const totalCentralCost = newCentrals.map(facility => facility.totalCost).reduce(reducer);
+        }))) : [];
+        const totalCentralCost = (newCentrals.length > 0) ? newCentrals.map(facility => facility.totalCost).reduce(reducer) : 0;
 
-        const newPark = input.parking.map(lot => JSON.parse(JSON.stringify({
+        const newPark = (input.parking.length > 0) ? input.parking.map(lot => JSON.parse(JSON.stringify({
             type  : lot.type,
             name : lot.name,
             area : lot.area,
             noRoom : lot.noRoom,
             cost : lot.cost,
             totalCost : lot.area * lot.noRoom * lot.cost
-        })));
-        const totalParkingCost = newPark.map(lot => lot.totalCost).reduce(reducer);
+        }))) : [];
+        const totalParkingCost = (newPark.length > 0) ? newPark.map(lot => lot.totalCost).reduce(reducer) : 0;
 
-        const newOutdoors = input.outdoors.map(garden => JSON.parse(JSON.stringify({
+        const newOutdoors = (input.outdoors.length > 0) ? input.outdoors.map(garden => JSON.parse(JSON.stringify({
             type  : garden.type,
             name : garden.name,
             area : garden.area,
             noRoom : garden.noRoom,
             cost : garden.cost,
             totalCost : garden.area * garden.noRoom * garden.cost
-        })));
-        const totalOutDoorCost = newOutdoors.map(garden => garden.totalCost).reduce(reducer);
+        }))) : [];
+        const totalOutDoorCost = (newOutdoors.length > 0) ? newOutdoors.map(garden => garden.totalCost).reduce(reducer) : 0;
 
         const totalConstructionCost = totalRoomCost + totalCentralCost + totalParkingCost + totalOutDoorCost;
 
-        const monthlyPaidItems = input.costPerMonths.map(item => JSON.parse(JSON.stringify({
+        const monthlyPaidItems = (input.costPerMonths.length > 0) ? input.costPerMonths.map(item => JSON.parse(JSON.stringify({
             type : item.type,
             cost : item.cost,
             no : item.no,
             total : item.cost * item.no
-        })));
-        const monthlyItemsCost = monthlyPaidItems.map(item => item.total).reduce(reducer);
+        }))) : [];
+        const monthlyItemsCost = (monthlyPaidItems.length > 0) ? monthlyPaidItems.map(item => item.total).reduce(reducer) : 0;
 
-        const totalElevatorCost = input.costLift * input.noLift;
-        const totalEquipmentsCost = totalElevatorCost + input.costITRoom + input.costCar + input.costRoomEquipment + 
-                                    input.costDesign + input.costOtherEquipment + input.costKitchenEquipment + input.costRestaurant +
-                                    input.costContingency;
-        const preOpeningCost = monthlyItemsCost * input.noMonthPreOpening;
-        const costSpecielEquipmentAndPreOpening = preOpeningCost + totalEquipmentsCost;
-        //since preOpeningCost comes from monthlyItemsCost * duration
-        const totalCostPerMonthAndPreOpening = preOpeningCost;
-        //missing costLand
-        const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost;
+        const equipments = (input.specialEquipments.length > 0) ? input.specialEquipments.map(item => JSON.parse(JSON.stringify({
+            type : item.type,
+            cost : item.cost,
+            no : item.no,
+            total : item.cost * item.no
+        }))) : [];
+        const equipmentsCost = (equipments.length > 0) ? equipments.map(item => item.total).reduce(reducer) : 0;
+        
+        const preOpeningCost = monthlyItemsCost * input.preOpeningDuration;
+        const costSpecielEquipmentAndPreOpening = preOpeningCost + equipmentsCost;
+        const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost + input.costLand;
 
 
         const spendings = {
@@ -236,12 +237,14 @@ class CommunityMall{
             totalOutdoorArea : product.user.totalOutdoorArea,
             totalOutDoorCost : totalOutDoorCost,
 
+            costPerMonth : monthlyPaidItems,
             totalCostPerMonth : monthlyItemsCost,
-            costPreOpening : preOpeningCost,
 
-            totalEquipmentsCost : totalEquipmentsCost,
-            totalCostPerMonthAndPreOpening : totalCostPerMonthAndPreOpening,
-            costLand : 0, //"Either from users's input or from calculation"
+            specialEquipments : equipments,
+            totalEquipmentsCost : equipmentsCost,
+
+            totalCostPerMonthAndPreOpening : preOpeningCost, //since preOpeningCost comes from monthlyItemsCost * duration
+            costLand : input.costLand,
             costSpecielEquipmentAndPreOpening : costSpecielEquipmentAndPreOpening,
             costConstruction : totalConstructionCost,
             absoluteCost : absoluteCost
@@ -259,24 +262,23 @@ class CommunityMall{
         const input = property.implicit_costs_input;
 
         const sellAreaSize = product.user.totalRoomArea;
-        const costLand = 0; //mock for now
-        const costAdvtAndEmployee = spendings.costPreOpening;
+        const costAdvtAndEmployee = spendings.totalCostPerMonthAndPreOpening;
         const costAll = spendings.absoluteCost;
-        const newIncome = input.incomes.map(room => JSON.parse(JSON.stringify({
+        const newIncome = (input.incomes.length > 0) ? input.incomes.map(room => JSON.parse(JSON.stringify({
             roomType  : room.roomType,
             roomName : room.roomName,
             area : room.area,
             noRoom : room.noRoom,
             pricePerRoom : room.pricePerRoom, 
             incomePerDay :  room.pricePerRoom * room.noRoom
-        })));
-        const incomePerDay = newIncome.map(room => room.incomePerDay).reduce(reducer);
-        const incomePerMonth = newIncome.map(room => room.incomePerDay * 30).reduce(reducer);
+        }))) : [];
+        const incomePerDay = (newIncome.lenght > 0) ? newIncome.map(room => room.incomePerDay).reduce(reducer) : 0;
+        const incomePerMonth = (newIncome.lenght > 0) ? newIncome.map(room => room.incomePerDay * 30).reduce(reducer) : 0;
         const netIncome = incomePerMonth - spendings.totalCostPerMonth;
 
         const implicitCosts = {
             sellAreaSize : sellAreaSize,
-            costLand : costLand,
+            costLand : property.spendings_input.costLand,
             costAdvtAndEmployee : costAdvtAndEmployee,
             costAll : costAll,
             occupancy : input.occupancy,
@@ -290,8 +292,62 @@ class CommunityMall{
         return implicitCosts;
     }
 
-    profit(property){
+    irr(property){
+        const spendings = this.spendings(property);
+        const implicitCosts = this.implicitCosts(property);
+        const input = property.irr_input;
 
+        const investmentBudget = property.spendings_input.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
+        const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
+        const breakEvenPointMonthlyWithCash = investmentBudget/netProfitPerMonth;
+        const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
+        const breakEvenPointMonthlyWithBank = investmentBudget/(netProfitPerMonth - (property.irr_input.borrowFund * property.irr_input.bankInterest/12));
+        const breakEvenPointYearWithBank = breakEvenPointMonthlyWithBank/12;
+        
+        const investmentValue = investmentBudget;
+        const investmentValueRatio = input.rationInvestmentValue;
+        const borrowFund = input.borrowFund;
+        const borrowFundRatio = borrowFund/investmentValueRatio;
+        const borrowFundInterest = input.interestBorrowFund;
+        const privateFund = investmentValue - borrowFund;
+        const privateFundRatio = privateFund/investmentValueRatio;
+        const privateFundInterest = input.interestPrivateFund;
+
+        const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
+        const cashflow = Array(input.cashFlowYear).fill(netProfitPerMonth * 12);
+        const npv = util.NPV(wacc,-investmentBudget,cashflow);
+        // const irr = finance.IRR(-investmentBudget,cashflow);
+        const irr = "waiting to be implement";
+        const IRR = {
+            irr: {
+                investmentBudget: investmentBudget,
+                incomePerMonth: netProfitPerMonth,
+                breakEvenPointMonthCash: breakEvenPointMonthlyWithCash,
+                breakEvenPointYearCash: breakEvenPointYearWithCash,
+                bankLoad: input.bankLoad,
+                privateCash: input.privateCash,
+                bankInterest: input.bankInterest,
+                returnRate: input.return,
+                breakEvenPointMonthBank: breakEvenPointMonthlyWithBank,
+                breakEvenPointYearBank: breakEvenPointYearWithBank,
+                cashFlowYear: input.cashFlowYear,
+                npvValue: npv,
+                irrValue: irr,
+                financeCosts: wacc,
+                paybackPeriod: breakEvenPointMonthlyWithCash,
+                investmentValue: investmentBudget,
+                ratioInvestmentValue: input.ratioInvestmentValue,
+                privateFund: privateFund,
+                ratioPrivateFund: privateFundRatio,
+                interestPrivateFund: privateFundInterest,
+                borrowFund: input.borrowFund,
+                ratioBorrowFund: borrowFundRatio,
+                interestBorrowFund: borrowFundInterest,
+                borrowPeriod: input.borrowPeriod
+            }
+        }
+
+        return IRR
     }
 }
 

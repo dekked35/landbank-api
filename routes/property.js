@@ -34,5 +34,11 @@ router.post('/profit', function(req, res, next){
   res.send(profit);
 });
 
+router.post('/irr',function(req, res, next){
+  propertyManager.setProperty(req.body.propertyType);
+  const irr = propertyManager.getIRR(req.body);
+  res.send(irr);
+});
+
 
 module.exports = router
