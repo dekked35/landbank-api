@@ -50,9 +50,9 @@ class PropertyManager{
         return JSON.parse(JSON.stringify({ profit : profit }));
     }
 
-    getIRR(property){
-        const irr = this.property.irr(property);
-        return JSON.parse(JSON.stringify({ irr : irr }));
+    getIPR(property){
+        const ipr = this.property.irr(property);
+        return JSON.parse(JSON.stringify({ ipr : ipr }));
     }
 
 

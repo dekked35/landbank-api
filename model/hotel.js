@@ -1,6 +1,4 @@
-const Util = require("../util/util");
 const Finance = require('financejs');
-const util = new Util();
 const finance = new Finance();
 
 class Hotel{
@@ -297,7 +295,7 @@ class Hotel{
         return implicitCosts;
     }
 
-    irr(property){
+    ipr(property){
         const spendings = this.spendings(property);
         const implicitCosts = this.implicitCosts(property);
         const input = property.irr_input;
@@ -319,12 +317,11 @@ class Hotel{
         const privateFundInterest = input.interestPrivateFund;
 
         const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
-        const cashflow = Array(input.cashFlowYear).fill(netProfitPerMonth * 12);
-        const npv = util.NPV(wacc,-investmentBudget,cashflow);
-        // const irr = finance.IRR(-investmentBudget,cashflow);
-        const irr = "waiting to be implement";
-        const IRR = {
-            irr: {
+        const cashflow = Array(input.cashFlowYear).fill(300000 * 12);
+        const npv = finance.NPV(wacc,-investmentBudget,...cashflow);
+        const irr = finance.IRR(-investmentBudget,...cashflow);
+        const IPR = {
+            ipr: {
                 investmentBudget: investmentBudget,
                 incomePerMonth: netProfitPerMonth,
                 breakEvenPointMonthCash: breakEvenPointMonthlyWithCash,
@@ -352,7 +349,7 @@ class Hotel{
             }
         }
 
-        return IRR
+        return IPR;
     }
 }
 

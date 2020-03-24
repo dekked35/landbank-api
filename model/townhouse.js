@@ -25,226 +25,206 @@ class Townhouse{
     }
 
     product(property){
-        const area = this.area(property);
-        //Wait for further instruction. Rn the calc is amount of 2flr 3flr 4flr combined.
-        const competitor_2flr_quantity = parseInt(((property.product_input.competitor_2flr_ratio/100) * area.sellArea)/property.product_input.competitor_2flr_size);
-        const competitor_3flr_quantity = parseInt(((property.product_input.competitor_3flr_ratio/100) * area.sellArea)/property.product_input.competitor_3flr_size);
-        const competitor_4flr_quantity = parseInt(((property.product_input.competitor_4flr_ratio/100) * area.sellArea)/property.product_input.competitor_4flr_size);
-        const competitor_allFlr_quantity = competitor_2flr_quantity + competitor_3flr_quantity + competitor_4flr_quantity;
-        const competitor_total_cost =   (competitor_2flr_quantity * property.product_input.competitor_2flr_cost) + 
-                                        (competitor_3flr_quantity * property.product_input.competitor_3flr_cost) + 
-                                        (competitor_4flr_quantity * property.product_input.competitor_4flr_cost);
-
-        const user_2flr_quantity = parseInt(((property.product_input.user_2flr_ratio/100) * area.sellArea)/property.product_input.user_2flr_size);
-        const user_3flr_quantity = parseInt(((property.product_input.user_3flr_ratio/100) * area.sellArea)/property.product_input.user_3flr_size);
-        const user_4flr_quantity = parseInt(((property.product_input.user_4flr_ratio/100) * area.sellArea)/property.product_input.user_4flr_size);
-        const user_allFlr_quantity = user_2flr_quantity + user_3flr_quantity + user_4flr_quantity;
-        const user_total_cost = (user_2flr_quantity * property.product_input.user_2flr_cost) + 
-                                (user_3flr_quantity * property.product_input.user_3flr_cost) + 
-                                (user_4flr_quantity * property.product_input.user_4flr_cost);
-
+        const competitorProduct = this.competitorProduct(property);
+        const userProduct = this.userProduct(property);
         const product = {
-            competitor_2flr_quantity : competitor_2flr_quantity,
-            competitor_3flr_quantity : competitor_3flr_quantity,
-            competitor_4flr_quantity : competitor_4flr_quantity,
-            competitor_allFlr_quantity : competitor_allFlr_quantity,
-            competitor_total_cost : competitor_total_cost,
-            user_2flr_quantity : user_2flr_quantity,
-            user_3flr_quantity : user_3flr_quantity,
-            user_4flr_quantity : user_4flr_quantity,
-            user_allFlr_quantity : user_allFlr_quantity,
-            user_total_cost : user_total_cost
-        };
-
+            competitor : competitorProduct.competitor,
+            user : userProduct.user
+        }
         return product;
     }
 
     userProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.user.products;
+        const input = property.product_input.user;
 
-        const twoFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        // const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
-        // const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
-        // const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.sellArea)/productInput[2].size);
-        // const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
-        // const totalCost =   (oneFloorQty * productInput[0].cost) + 
-        //                     (twoFloorQty * productInput[1].cost) + 
-        //                     (threeFloorQty * productInput[2].cost);
+        const newProducts = productInput.map(product => JSON.parse(JSON.stringify({
+            type : product.type,
+            area : product.area,
+            stairArea : 2.2 * (input.depth * 0.5),
+            cost : product.cost,
+            ratio : product.ratio,
+            quantity : ((product.ratio/100) * area.totalArea)/(product.area * 4)
+        })));
+
+        const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
+        const totalNewProductPrice = newProducts.map(product => product.quantity * product.cost).reduce(reducer);
+
+        const centralArea = input.depth * input.width;
+        const frontArea = input.width * input.frontDepth;
+        const behindArea = input.width * input.behindDepth;
+        const totalAreaMeter = centralArea + frontArea + behindArea;
+        const totalAreaSquare = totalAreaMeter/4;
 
         const userProduct = {
             user : {
-                products: [
-                    {
-                        type : "two floor house",
-                        size : productInput[0].size,
-                        area : productInput[0].area,
-                        cost : productInput[0].cost,
-                        ratio : productInput[0].ratio,
-                        quantity : twoFloorQty
-                    },
-                    {
-                        type : "three floor house",
-                        size : productInput[1].size,
-                        area : productInput[1].area,
-                        cost : productInput[1].cost,
-                        ratio : productInput[1].ratio,
-                        quantity : threeFloorQty
-                    },
-                    {
-                        type : "four floor house",
-                        size : productInput[2].size,
-                        area : productInput[2].area,
-                        cost : productInput[2].cost,
-                        ratio : productInput[2].ratio,
-                        quantity : fourFloorQty
-                    }
-                ],
-                totalQuantity : totalFloorQty,
-                totalCost : totalCost
-            } ,
-            totalWidth : [
-                {
-                    type : "4 metres wide",
-                    informations : [
-                        { type : "two floor house", quantity : 0},
-                        { type : "three floor house", quantity : 0},
-                        { type : "four floor house", quantity : 0},
-                    ]
-                },
-                {
-                    type : "5 metres wide",
-                    informations : [
-                        { type : "two floor house", quantity : 0},
-                        { type : "three floor house", quantity : 0},
-                        { type : "four floor house", quantity : 0},
-                    ]
-                },
-                {
-                    type : "6 metres wide",
-                    informations : [
-                        { type : "two floor house", quantity : 0},
-                        { type : "three floor house", quantity : 0},
-                        { type : "four floor house", quantity : 0},
-                    ]
-                }
-            ]
+                products: newProducts,
+                depth : input.depth,
+                width : input.width,
+                frontDepth : input.frontDepth,
+                behindDepth : input.behindDepth,
+                centralArea : centralArea,
+                frontArea : frontArea,
+                behindArea : behindArea,
+                totalAreaMeter : totalAreaMeter,
+                totalAreaSquare : totalAreaSquare,
+                totalQuantity : newProductsQty,
+                totalCost : totalNewProductPrice
+            }
         }
 
         return userProduct;
     }
 
+    competitorProduct(property){
+        const area = this.area(property);
+        const productInput = property.product_input.competitor.products;
+        const input = property.product_input.competitor;
+
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+        const newProducts = productInput.map(product => JSON.parse(JSON.stringify({
+            type : product.type,
+            area : product.area,
+            stairArea : 2.2 * (input.depth * 0.5),
+            cost : product.cost,
+            ratio : product.ratio,
+            quantity : ((product.ratio/100) * area.totalArea)/(product.area * 4)
+        })));
+
+        const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
+        const totalNewProductPrice = newProducts.map(product => product.quantity * product.cost).reduce(reducer);
+
+        const centralArea = input.depth * input.width;
+        const frontArea = input.width * input.frontDepth;
+        const behindArea = input.width * input.behindDepth;
+        const totalAreaMeter = centralArea + frontArea + behindArea;
+        const totalAreaSquare = totalAreaMeter/4;
+
+        const competitorProduct = {
+            competitor : {
+                products: newProducts,
+                depth : input.depth,
+                width : input.width,
+                frontDepth : input.frontDepth,
+                behindDepth : input.behindDepth,
+                centralArea : centralArea,
+                frontArea : frontArea,
+                behindArea : behindArea,
+                totalAreaMeter : totalAreaMeter,
+                totalAreaSquare : totalAreaSquare,
+                totalQuantity : newProductsQty,
+                totalCost : totalNewProductPrice
+            }
+        }
+
+        return competitorProduct;
+    }
+
     spendings(property){
         const area = this.area(property);
-        const product = this.product(property);
+        const product = this.userProduct(property);
+        const input = property.spendings_input;
 
-        const costDevelopRoad = area.greenArea * 1250 * 4;
-        const costRoadCover = (area.totalArea/400) * 200000;
-        const costTapWater = area.totalArea * 76;
-        const costWaterTreatment = area.totalArea * 250;
-        const costElectricity = area.totalArea * 250;
-        const costFenceAndGuardHouse = area.fenceLength * 3000;
-        const costDevelopGreenArea = area.greenArea * 3000 * 4;
-        const costDevelopLand = property.spendings_input.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
-        const costInProject = costDevelopLand + property.spendings_input.priceLandBought;
-        const costDevelopDone = costInProject/area.sellArea
-        //Wait for further instruction. Rn the calc is one width per one type of townhouse.∫
-        const costTwoFloorConstruction = (property.product_input.user_2flr_width[0] * property.product_input.user_2flr_length * 2)
-                                        * property.spendings_input.costConstructionLivingSpace
-        const costThreeFloorConstruction = (property.product_input.user_3flr_width[1] * property.product_input.user_3flr_length * 3) 
-                                        * property.spendings_input.costConstructionLivingSpace
-        const costFourFloorConstruction = (property.product_input.user_4flr_width[2] * property.product_input.user_4flr_length * 4) 
-                                        * property.spendings_input.costConstructionLivingSpace
-        
-        const costTwoFloorConstructionTotal = costTwoFloorConstruction * product.user_2flr_quantity;
-        const costThreeFloorConstructionTotal = costThreeFloorConstruction * product.user_3flr_quantity;
-        const costFourFloorConstructionTotal = costFourFloorConstruction * product.user_4flr_quantity;
+        const constructionItems = product.user.products.map(item => JSON.parse(JSON.stringify({
+            type : item.type,
+            costPerItem : item.area * 9000,
+            quantity : item.quantity,
+            total : (item.area * 9000) * item.quantity
+        })));
 
-        const salaryEmployee = property.spendings_input.sellPeriod * property.spendings_input.salaryEmployee;
-        const costAdvtOnePer = product.user_total_cost * 0.01;
-        const costAdvt = costAdvtOnePer * property.spendings_input.sellPeriod;
+        const roadDevelopmentCost = area.totalArea * 76;
+        const roadCoverCost = (area.totalArea/4000) * 200000;
+        const waterPipelineCost = area.totalArea * 76;
+        const waterTreatmentCost = area.totalArea * 250;
+        const electricityCost = area.totalArea * 250;
+        const guardHouseAndFenceCost = area.fenceLength * 3000;
+        const greenAreaDevelopment = (area.totalArea * 0.5) * 3000 * 4;
+        const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment + 500000;
+        const totalLandCost = landDevelopmentCost + input.priceLandBought;
+        const developedLand = totalLandCost/(area.totalArea * 0.65);
+
+        const duration = util.duration(input.periodSellStart, input.periodSellEnd);
+        const employeesSalary = input.totalSalary * duration;
+        const adCost = product.user.totalCost * 0.1;
 
         const spendings = {
-            costDevelopRoad : costDevelopRoad,
-            costRoadCover : costRoadCover,
-            costTapWater : costTapWater,
-            costWaterTreatment : costWaterTreatment,
-            costElectricity : costElectricity,
-            costFenceAndGuardHouse : costFenceAndGuardHouse,
-            costDevelopGreenArea : costDevelopGreenArea,
-            costDevelopLand : costDevelopLand,
-            costInProject : costInProject,
-            costDevelopDone : costDevelopDone,
-            costTwoFloorConstruction : costTwoFloorConstruction,
-            costThreeFloorConstruction : costThreeFloorConstruction,
-            costFourFloorConstruction : costFourFloorConstruction,
-            user_2flr_quantity : product.user_2flr_quantity,
-            user_3flr_quantity : product.user_3flr_quantity,
-            user_4flr_quantity : product.user_4flr_quantity,
-            costTwoFloorConstructionTotal : costTwoFloorConstructionTotal,
-            costThreeFloorConstructionTotal : costThreeFloorConstructionTotal,
-            costFourFloorConstructionTotal : costFourFloorConstructionTotal,
-            salaryEmployee : salaryEmployee,
-            costAdvtOnePer : costAdvtOnePer,
-            costAdvt : costAdvt
+            priceLandBought : input.priceLandBought,
+            costConstructionAndLivingSpace : input.costConstructionAndLivingSpace,
+            costOther : input.costOther,
+            costPlan : input.costPlan,
+            costConstructionPerItem : constructionItems,
+            costDevelopRoad : roadDevelopmentCost,
+            costRoadCover : roadCoverCost,
+            costTapWater : waterPipelineCost,
+            costWaterTreatment : waterTreatmentCost,
+            costElectricity : electricityCost,
+            costFenceAndGuardHouse : guardHouseAndFenceCost,
+            costDevelopGreenArea : greenAreaDevelopment,
+            costDevelopLand : landDevelopmentCost,
+            totalLandCost : totalLandCost,
+            costDevelopDone : developedLand,
+            periodSellStart : input.periodSellStart,
+            periodSellEnd : input.periodSellEnd,
+            duration : duration,
+            noEmployee : input.noEmployee,
+            totalSalary : input.totalSalary,
+            salaryEmployee : employeesSalary,
+            costAdvt : input.costAdvt,
+            costAdvtOnePer : adCost
         };
 
         return spendings;
     }
 
     implicitCosts(property){
-        const area = this.area(property);
-        const product = this.product(property);
+        const product = this.userProduct(property);
         const spendings = this.spendings(property);
 
-        const costLand = (property.product_input.user_2flr_size + property.product_input.user_3flr_size + property.product_input.user_4flr_size) * spendings.costDevelopDone;
-        const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const implicitCosts = {
-            sellAreaSize : area.sellArea,
-            costLand : costLand,
+        const sellArea = (product.user.products.map(product => product.area).reduce(reducer)) * 4;
+        const landCost = property.spendings_input.priceLandBought;
+        const totalCost = spendings.costDevelopLand + landCost;
+        const costAdvtAndEmployee = (spendings.salaryEmployee + spendings.costAdvtOnePer) * spendings.duration;
+        const projectCost = product.user.totalCost;
+
+        const implicitCost = {
+            sellAreaAndSize : sellArea,
+            costLand : landCost,
             costAdvtAndEmployee : costAdvtAndEmployee,
-            costAll : spendings.costInProject,
-            costProject : product.user_total_cost
+            costAll : totalCost,
+            costProject : projectCost
         }
 
-        return implicitCosts;
+        return implicitCost;
     }
 
     profit(property){
-        const product = this.product(property);
+        const product = this.userProduct(property);
         const spendings = this.spendings(property);
+        const implicitCosts = this.implicitCosts(property);
 
-        const twoFloorLandCost = property.product_input.user_2flr_size * spendings.costDevelopDone;
-        const threeFloorLandCost = property.product_input.user_3flr_size * spendings.costDevelopDone;
-        const fourFloorLandCost = property.product_input.user_4flr_size * spendings.costDevelopDone;
-        const singleTwoFloorCost = spendings.costTwoFloorConstruction + twoFloorLandCost + property.spendings_input.costOther;
-        const singleThreeFloorCost = spendings.costThreeFloorConstruction + threeFloorLandCost + property.spendings_input.costOther;
-        const singleFourFloorCost = spendings.costFourFloorConstruction + fourFloorLandCost + property.spendings_input.costOther;
-        const singleTwoFloorProfit = property.product_input.user_2flr_cost - singleTwoFloorCost;
-        const singleThreeFloorProfit = property.product_input.user_3flr_cost - singleThreeFloorCost;
-        const singleFourFloorProfit = property.product_input.user_4flr_cost - singleFourFloorCost;
-        const totalTwoFloorProfit = singleTwoFloorProfit * product.user_2flr_quantity;
-        const totalThreeFloorProfit = singleThreeFloorProfit * product.user_3flr_quantity;
-        const totalFourFloorProfit = singleFourFloorProfit * product.user_4flr_quantity;
-        const totalProfit = totalTwoFloorProfit + totalThreeFloorProfit + totalFourFloorProfit;
-        const netProfit = totalProfit - spendings.costInProject;
-        const averageProfitPerHouse = netProfit/ product.user_allFlr_quantity
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
+        const profitPerItems = product.user.products.map(item => JSON.parse(JSON.stringify({
+            type : item.type,
+            profitPerItem : item.cost,
+            noItem : item.quantity,
+            totalProfit : item.cost - (spendings.costDevelopDone * 21) + (item.area * 9000) + 50000
+        })));
+        const projectProfit = profitPerItems.map(item => item.totalProfit).reduce(reducer);
+        const netProfit = projectProfit - implicitCosts.costAdvtAndEmployee;
+        const averageProfit = netProfit/product.user.totalQuantity;
+        
         const profit = {
-            singleTwoFloorProfit : singleTwoFloorProfit,
-            singleThreeFloorProfit : singleThreeFloorProfit,
-            singleFourFloorProfit : singleFourFloorProfit,
-            user_2flr_quantity : product.user_2flr_quantity,
-            user_3flr_quantity : product.user_3flr_quantity,
-            user_4flr_quantity : product.user_4flr_quantity,
-            totalTwoFloorProfit : totalTwoFloorProfit,
-            totalThreeFloorProfit : totalThreeFloorProfit,
-            totalFourFloorProfit : totalFourFloorProfit,
-            totalProfit : totalProfit,
+            profitPerItems : profitPerItems,
+            totalProfit : projectProfit,
             netProfit : netProfit,
-            averageProfitPerHouse : averageProfitPerHouse
+            averageProfit : averageProfit
         };
 
         return profit;
