@@ -36,7 +36,7 @@ router.post('/profit', function(req, res, next){
 
 router.post('/ipr',function(req, res, next){
   propertyManager.setProperty(req.body.propertyType);
-  const ipr = propertyManager.getIRR(req.body);
+  const ipr = propertyManager.getIPR(req.body);
   res.send(ipr);
 });
 

@@ -199,6 +199,7 @@ class Village {
             periodSellEnd : spendingsInput.periodSellEnd,
             sellPeriod : duration,
             noEmployee : spendingsInput.noEmployee,
+            totalSalary : spendingsInput.salaryEmployee,
             salaryEmployee : salaryEmployee,
             costAdvtOnePer : costAdvtOnePer,
             costAdvt : costAdvt

@@ -7,25 +7,12 @@ class Hotel{
     area(property){
         const input = property.area_input;
         const availableArea = input.totalArea * 0.65;
-        // const availableArea = input.totalArea * 0.65;
-        // const usedArea = 0;
-        // const totalAreaRooms = 0;
-        // const totalAreaCentrals = 0;
-        // const totalCorridor = 0;
-        // const totalParkingArea = 0;
-        // const totalOutdoorArea = 0;
         const area = {
             townPlanColor : input.farValue,
             farValue : input.farValue,
             osrValue : input.osrValue,
             totalArea : input.totalArea,
             availableArea : availableArea,
-            // usedArea : usedArea,
-            // totalAreaRooms : totalAreaRooms,
-            // totalAreaCentrals : totalAreaCentrals,
-            // totalCorridor : totalCorridor,
-            // totalParkingArea : totalParkingArea,
-            // totalOutdoorArea : totalOutdoorArea
         };
 
         return area;
@@ -215,7 +202,8 @@ class Hotel{
         }))) : [];
         const equipmentsCost = (equipments.length > 0) ? equipments.map(item => item.total).reduce(reducer) : 0;
         
-        const preOpeningCost = monthlyItemsCost * input.preOpeningDuration;
+        const duration = equipments.find(eq => eq.type === "ค่า Pre-Opening" || eq.type === "Pre-Opening");
+        const preOpeningCost = monthlyItemsCost * duration.no;
         const costSpecielEquipmentAndPreOpening = preOpeningCost + equipmentsCost;
         const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost + input.costLand;
 
@@ -302,13 +290,14 @@ class Hotel{
 
         const investmentBudget = property.spendings_input.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
         const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
+        console.log(netProfitPerMonth);
         const breakEvenPointMonthlyWithCash = investmentBudget/netProfitPerMonth;
         const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
-        const breakEvenPointMonthlyWithBank = investmentBudget/(netProfitPerMonth - (property.irr_input.borrowFund * property.irr_input.bankInterest/12));
+        const breakEvenPointMonthlyWithBank = investmentBudget/(netProfitPerMonth - (input.borrowFund * input.bankInterest/12));
         const breakEvenPointYearWithBank = breakEvenPointMonthlyWithBank/12;
         
         const investmentValue = investmentBudget;
-        const investmentValueRatio = input.rationInvestmentValue;
+        const investmentValueRatio = input.ratioInvestmentValue;
         const borrowFund = input.borrowFund;
         const borrowFundRatio = borrowFund/investmentValueRatio;
         const borrowFundInterest = input.interestBorrowFund;
@@ -329,12 +318,12 @@ class Hotel{
                 bankLoad: input.bankLoad,
                 privateCash: input.privateCash,
                 bankInterest: input.bankInterest,
-                returnRate: input.return,
+                returnRate: input.returnRate,
                 breakEvenPointMonthBank: breakEvenPointMonthlyWithBank,
                 breakEvenPointYearBank: breakEvenPointYearWithBank,
                 cashFlowYear: input.cashFlowYear,
                 npvValue: npv,
-                irrValue: irr,
+                irrValue: irr, 
                 financeCosts: wacc,
                 paybackPeriod: breakEvenPointMonthlyWithCash,
                 investmentValue: investmentBudget,

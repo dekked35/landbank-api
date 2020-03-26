@@ -47,7 +47,7 @@ class Townhouse{
             stairArea : 2.2 * (input.depth * 0.5),
             cost : product.cost,
             ratio : product.ratio,
-            quantity : ((product.ratio/100) * area.totalArea)/(product.area * 4)
+            quantity : parseInt(((product.ratio/100) * area.totalArea)/(product.area * 4))
         })));
 
         const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
@@ -92,7 +92,7 @@ class Townhouse{
             stairArea : 2.2 * (input.depth * 0.5),
             cost : product.cost,
             ratio : product.ratio,
-            quantity : ((product.ratio/100) * area.totalArea)/(product.area * 4)
+            quantity : parseInt(((product.ratio/100) * area.totalArea)/(product.area * 4))
         })));
 
         const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
@@ -153,7 +153,7 @@ class Townhouse{
 
         const spendings = {
             priceLandBought : input.priceLandBought,
-            costConstructionAndLivingSpace : input.costConstructionAndLivingSpace,
+            costConstructionLivingSpace : input.costConstructionLivingSpace,
             costOther : input.costOther,
             costPlan : input.costPlan,
             costConstructionPerItem : constructionItems,
@@ -165,11 +165,11 @@ class Townhouse{
             costFenceAndGuardHouse : guardHouseAndFenceCost,
             costDevelopGreenArea : greenAreaDevelopment,
             costDevelopLand : landDevelopmentCost,
-            totalLandCost : totalLandCost,
+            costInProject : totalLandCost,
             costDevelopDone : developedLand,
             periodSellStart : input.periodSellStart,
             periodSellEnd : input.periodSellEnd,
-            duration : duration,
+            sellPeriod : duration,
             noEmployee : input.noEmployee,
             totalSalary : input.totalSalary,
             salaryEmployee : employeesSalary,
@@ -189,11 +189,11 @@ class Townhouse{
         const sellArea = (product.user.products.map(product => product.area).reduce(reducer)) * 4;
         const landCost = property.spendings_input.priceLandBought;
         const totalCost = spendings.costDevelopLand + landCost;
-        const costAdvtAndEmployee = (spendings.salaryEmployee + spendings.costAdvtOnePer) * spendings.duration;
+        const costAdvtAndEmployee = (spendings.salaryEmployee + spendings.costAdvtOnePer) * spendings.sellPeriod;
         const projectCost = product.user.totalCost;
 
         const implicitCost = {
-            sellAreaAndSize : sellArea,
+            sellAreaSize : sellArea,
             costLand : landCost,
             costAdvtAndEmployee : costAdvtAndEmployee,
             costAll : totalCost,
@@ -214,7 +214,8 @@ class Townhouse{
             type : item.type,
             profitPerItem : item.cost,
             noItem : item.quantity,
-            totalProfit : item.cost - (spendings.costDevelopDone * 21) + (item.area * 9000) + 50000
+            totalProfit : ((item.area * property.spendings_input.costConstructionLivingSpace) +
+                          (spendings.costDevelopDone * 21) + property.spendings_input.costOther + property.spendings_input.costPlan)
         })));
         const projectProfit = profitPerItems.map(item => item.totalProfit).reduce(reducer);
         const netProfit = projectProfit - implicitCosts.costAdvtAndEmployee;

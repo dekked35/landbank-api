@@ -2,7 +2,7 @@ class Util{
     duration(firstDate, lastDate){
         const start = new Date(firstDate);
         const end = new Date(lastDate);
-        const duration = (end.getTime() - start.getTime()) / (1000 * 3600 * 24);
+        const duration = parseInt(((end.getTime() - start.getTime()) / (1000 * 3600 * 24))/30);
         return duration;
     }
 }
