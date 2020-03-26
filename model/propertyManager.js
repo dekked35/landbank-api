@@ -51,7 +51,7 @@ class PropertyManager{
     }
 
     getIPR(property){
-        const ipr = this.property.irr(property);
+        const ipr = this.property.ipr(property);
         return JSON.parse(JSON.stringify({ ipr : ipr }));
     }
 

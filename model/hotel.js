@@ -298,7 +298,7 @@ class Hotel{
     ipr(property){
         const spendings = this.spendings(property);
         const implicitCosts = this.implicitCosts(property);
-        const input = property.irr_input;
+        const input = property.ipr_input;
 
         const investmentBudget = property.spendings_input.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
         const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
