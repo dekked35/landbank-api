@@ -263,8 +263,9 @@ class Hotel{
             pricePerRoom : room.pricePerRoom, 
             incomePerDay :  room.pricePerRoom * room.noRoom
         }))) : [];
-        const incomePerDay = (newIncome.lenght > 0) ? newIncome.map(room => room.incomePerDay).reduce(reducer) : 0;
-        const incomePerMonth = (newIncome.lenght > 0) ? newIncome.map(room => room.incomePerDay * 30).reduce(reducer) : 0;
+        const incomePerDay = (newIncome.length > 0) ? newIncome.map(room => room.incomePerDay).reduce(reducer) : 0;
+        const incomePerMonth = (newIncome.length > 0) ? newIncome.map(room => room.incomePerDay * 30).reduce(reducer) : 0;
+        const incomePerYear = (newIncome.length > 0) ? (newIncome.map(room => room.incomePerDay * 30).reduce(reducer)) * 12 : 0;
         const netIncome = incomePerMonth - spendings.totalCostPerMonth;
 
         const implicitCosts = {
@@ -277,7 +278,7 @@ class Hotel{
             totalIncomePerDay : incomePerDay,
             totalIncomePerMonth : incomePerMonth,
             estimatedIncomePerMonth : netIncome,
-            totalIncomePerYear : incomePerMonth * 12,
+            totalIncomePerYear : incomePerYear
         }
 
         return implicitCosts;
@@ -290,7 +291,6 @@ class Hotel{
 
         const investmentBudget = property.spendings_input.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
         const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
-        console.log(netProfitPerMonth);
         const breakEvenPointMonthlyWithCash = investmentBudget/netProfitPerMonth;
         const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
         const breakEvenPointMonthlyWithBank = investmentBudget/(netProfitPerMonth - (input.borrowFund * input.bankInterest/12));
