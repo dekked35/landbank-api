@@ -306,7 +306,8 @@ class Hotel{
         const privateFundInterest = input.interestPrivateFund;
 
         const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
-        const cashflow = Array(input.cashFlowYear).fill(300000 * 12);
+        const netProfitPerYear = netProfitPerMonth * 12;
+        const cashflow = Array(input.cashFlowYear).fill(netProfitPerYear * input.cashFlowYear);
         const npv = finance.NPV(wacc,-investmentBudget,...cashflow);
         const irr = finance.IRR(-investmentBudget,...cashflow);
         const IPR = {
