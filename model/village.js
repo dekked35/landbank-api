@@ -8,17 +8,19 @@ class Village {
         const areaInput = property.area_input;
 
         const fenceLength = 3.14 * ((Math.sqrt(areaInput.totalArea * 4)/(22/7))) * 2;
-        const sellArea = areaInput.totalArea * 0.65;
-        const roadSize = areaInput.totalArea * 0.3;
-        const greenArea = areaInput.totalArea * 0.05;
+        const ratio_area = JSON.parse(JSON.stringify({
+            sellArea : (areaInput.percent.sellArea/100) * areaInput.totalArea,
+            roadSize : (areaInput.percent.roadSize/100) * areaInput.totalArea,
+            greenArea : (areaInput.percent.greenArea/100) * areaInput.totalArea
+        }));
+        
         const area = {
             farValue : areaInput.farValue,
             osrValue : areaInput.osrValue,
             totalArea : areaInput.totalArea,
             fenceLength : fenceLength,
-            sellArea : sellArea,
-            roadSize : roadSize,
-            greenArea : greenArea 
+            percent : areaInput.percent,
+            ratio_area : ratio_area
         };
 
         return area;
@@ -38,9 +40,9 @@ class Village {
         const area = this.area(property);
         const productInput = property.product_input.competitor.products;
 
-        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.sellArea)/productInput[2].size);
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/productInput[0].size);
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/productInput[1].size);
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/productInput[2].size);
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -85,10 +87,9 @@ class Village {
     userProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.user.products;
-
-        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.sellArea)/productInput[0].size);
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.sellArea)/productInput[1].size);
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.sellArea)/productInput[2].size);
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/productInput[0].size);
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/productInput[1].size);
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/productInput[2].size);
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -138,16 +139,16 @@ class Village {
         const productInput = property.product_input.user.products;
         const userProduct = product.user.products;
 
-        const costDevelopRoad = area.greenArea * 1250 * 4;
+        const costDevelopRoad = area.ratio_area.greenArea * 1250 * 4;
         const costRoadCover = (area.totalArea/400) * 200000;
         const costTapWater = area.totalArea * 76;
         const costWaterTreatment = area.totalArea * 250;
         const costElectricity = area.totalArea * 250;
         const costFenceAndGuardHouse = area.fenceLength * 3000;
-        const costDevelopGreenArea = area.greenArea * 3000 * 4;
+        const costDevelopGreenArea = area.ratio_area.greenArea * 3000 * 4;
         const costDevelopLand = spendingsInput.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
-        const costDevelopDone = costInProject/area.sellArea
+        const costDevelopDone = costInProject/area.ratio_area.sellArea
         const costOneFloorConstruction = productInput[0].area * spendingsInput.costConstructionLivingSpace
         const costTwoFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
         const costThreeFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
@@ -218,7 +219,7 @@ class Village {
         const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
 
         const implicitCosts = {
-            sellAreaSize : area.sellArea,
+            sellAreaSize : area.ratio_area.sellArea,
             costLand : costLand,
             costAdvtAndEmployee : costAdvtAndEmployee,
             costAll : spendings.costInProject,
