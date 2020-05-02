@@ -16,6 +16,8 @@ class Condo{
             outdoor: (input.percent.outdoor/100) * availableArea
         }));
 
+        const costLand = (input.costLand > 0) ? input.costLand : input.deposit + (input.rentNoYear * 12 * input.rentPerMonth);
+
         const area = {
             townPlanColor : input.farValue,
             farValue : input.farValue,
@@ -23,7 +25,8 @@ class Condo{
             totalArea : input.totalArea,
             availableArea : availableArea,
             percent : input.percent,
-            ratio_area : newRatio
+            ratio_area : newRatio,
+            costLand : costLand
         };
 
         return area;
@@ -171,6 +174,7 @@ class Condo{
     }
 
     spendings(property){
+        const area = this.area(property);
         const product = this.userProduct(property);
         const input = property.spendings_input;
 
@@ -237,7 +241,7 @@ class Condo{
         const duration = equipments.find(eq => eq.type === "ค่า Pre-Opening" || eq.type === "Pre-Opening");
         const preOpeningCost = monthlyItemsCost * duration.no;
         const costSpecielEquipmentAndPreOpening = preOpeningCost + equipmentsCost;
-        const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost + input.costLand;
+        const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost + area.costLand;
 
 
         const spendings = {
@@ -267,7 +271,7 @@ class Condo{
             totalEquipmentsCost : equipmentsCost,
 
             totalCostPerMonthAndPreOpening : preOpeningCost, //since preOpeningCost comes from monthlyItemsCost * duration
-            costLand : input.costLand,
+            costLand : area.costLand,
             costSpecielEquipmentAndPreOpening : costSpecielEquipmentAndPreOpening,
             costConstruction : totalConstructionCost,
             absoluteCost : absoluteCost
@@ -277,6 +281,7 @@ class Condo{
     }
 
     implicitCosts(property){
+        const area = this.area(propety);
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
 
@@ -302,7 +307,7 @@ class Condo{
 
         const implicitCosts = {
             sellAreaSize : sellAreaSize,
-            costLand : property.spendings_input.costLand,
+            costLand : area.costLand,
             costAdvtAndEmployee : costAdvtAndEmployee,
             costAll : costAll,
             occupancy : input.occupancy,
@@ -317,13 +322,13 @@ class Condo{
     }
 
     ipr(property){
+        const area = this.area(property);
         const spendings = this.spendings(property);
         const implicitCosts = this.implicitCosts(property);
         const input = property.ipr_input;
 
-        const investmentBudget = property.spendings_input.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
+        const investmentBudget = area.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
         const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
-        console.log(netProfitPerMonth);
         const breakEvenPointMonthlyWithCash = investmentBudget/netProfitPerMonth;
         const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
         const breakEvenPointMonthlyWithBank = investmentBudget/(netProfitPerMonth - (input.borrowFund * input.bankInterest/12));
@@ -339,7 +344,8 @@ class Condo{
         const privateFundInterest = input.interestPrivateFund;
 
         const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
-        const cashflow = Array(input.cashFlowYear).fill(300000 * 12);
+        const netProfitPerYear = netProfitPerMonth * 12;
+        const cashflow = Array(input.cashFlowYear).fill(netProfitPerYear * input.cashFlowYear);
         const npv = finance.NPV(wacc,-investmentBudget,...cashflow);
         const irr = finance.IRR(-investmentBudget,...cashflow);
         const IPR = {

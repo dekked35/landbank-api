@@ -151,7 +151,7 @@ class Village {
         const costDevelopDone = costInProject/area.ratio_area.sellArea
         const costOneFloorConstruction = productInput[0].area * spendingsInput.costConstructionLivingSpace
         const costTwoFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
-        const costThreeFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
+        const costThreeFloorConstruction = productInput[2].area * spendingsInput.costConstructionLivingSpace
         
         const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
@@ -280,6 +280,7 @@ class Village {
 
         return profit;
     }
+    
 }
 
 module.exports = Village;

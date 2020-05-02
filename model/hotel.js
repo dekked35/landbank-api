@@ -16,6 +16,8 @@ class Hotel{
             outdoor: (input.percent.outdoor/100) * availableArea
         }));
 
+        const costLand = (input.costLand > 0) ? input.costLand : input.deposit + (input.rentNoYear * 12 * input.rentPerMonth);
+
         const area = {
             townPlanColor : input.farValue,
             farValue : input.farValue,
@@ -23,7 +25,8 @@ class Hotel{
             totalArea : input.totalArea,
             availableArea : availableArea,
             percent : input.percent,
-            ratio_area : newRatio
+            ratio_area : newRatio,
+            costLand : costLand
         };
 
         return area;
@@ -171,6 +174,7 @@ class Hotel{
     }
 
     spendings(property){
+        const area = this.area(property);
         const product = this.userProduct(property);
         const input = property.spendings_input;
 
@@ -237,7 +241,7 @@ class Hotel{
         const duration = equipments.find(eq => eq.type === "ค่า Pre-Opening" || eq.type === "Pre-Opening");
         const preOpeningCost = monthlyItemsCost * duration.no;
         const costSpecielEquipmentAndPreOpening = preOpeningCost + equipmentsCost;
-        const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost + input.costLand;
+        const absoluteCost = costSpecielEquipmentAndPreOpening + monthlyItemsCost + totalConstructionCost + area.costLand;
 
 
         const spendings = {
@@ -267,7 +271,7 @@ class Hotel{
             totalEquipmentsCost : equipmentsCost,
 
             totalCostPerMonthAndPreOpening : preOpeningCost, //since preOpeningCost comes from monthlyItemsCost * duration
-            costLand : input.costLand,
+            costLand : area.costLand,
             costSpecielEquipmentAndPreOpening : costSpecielEquipmentAndPreOpening,
             costConstruction : totalConstructionCost,
             absoluteCost : absoluteCost
@@ -277,6 +281,7 @@ class Hotel{
     }
 
     implicitCosts(property){
+        const area = this.area(propety);
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
 
@@ -302,7 +307,7 @@ class Hotel{
 
         const implicitCosts = {
             sellAreaSize : sellAreaSize,
-            costLand : property.spendings_input.costLand,
+            costLand : area.costLand,
             costAdvtAndEmployee : costAdvtAndEmployee,
             costAll : costAll,
             occupancy : input.occupancy,
@@ -317,11 +322,12 @@ class Hotel{
     }
 
     ipr(property){
+        const area = this.area(property);
         const spendings = this.spendings(property);
         const implicitCosts = this.implicitCosts(property);
         const input = property.ipr_input;
 
-        const investmentBudget = property.spendings_input.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
+        const investmentBudget = area.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
         const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
         const breakEvenPointMonthlyWithCash = investmentBudget/netProfitPerMonth;
         const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
