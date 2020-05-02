@@ -352,6 +352,7 @@ class Condo{
             ipr: {
                 investmentBudget: investmentBudget,
                 incomePerMonth: netProfitPerMonth,
+                expensePerMonth: spendings.totalCostPerMonth,
                 breakEvenPointMonthCash: breakEvenPointMonthlyWithCash,
                 breakEvenPointYearCash: breakEvenPointYearWithCash,
                 bankLoad: input.bankLoad,
