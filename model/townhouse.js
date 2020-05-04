@@ -7,11 +7,11 @@ class Townhouse{
     area(property){
         const areaInput = property.area_input;
 
-        const fenceLength = 3.14 * ((Math.sqrt(areaInput.totalArea * 4)/(22/7))) * 2;
+        const fenceLength = 3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2;
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : (areaInput.percent.sellArea/100) * areaInput.totalArea,
-            roadSize : (areaInput.percent.roadSize/100) * areaInput.totalArea,
-            greenArea : (areaInput.percent.greenArea/100) * areaInput.totalArea
+            sellArea : (areaInput.percent.sellArea/100) * areaInput.availableArea,
+            roadSize : (areaInput.percent.roadSize/100) * areaInput.availableArea,
+            greenArea : (areaInput.percent.greenArea/100) * areaInput.availableArea
         }));
 
         const area = {

@@ -6,7 +6,7 @@ class Hotel{
 
     area(property){
         const input = property.area_input;
-        const availableArea = input.totalArea;
+        const availableArea = input.availableArea;
 
         const newRatio = JSON.parse(JSON.stringify({
             room: (input.percent.room/100) * availableArea,
@@ -281,7 +281,7 @@ class Hotel{
     }
 
     implicitCosts(property){
-        const area = this.area(propety);
+        const area = this.area(property);
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
 
