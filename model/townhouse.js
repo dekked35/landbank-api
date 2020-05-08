@@ -7,17 +7,18 @@ class Townhouse{
     area(property){
         const areaInput = property.area_input;
 
-        const fenceLength = 3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2;
+        const fenceLength = 3.14 * ((Math.sqrt(areaInput.totalArea * 4)/(22/7))) * 2;
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : (areaInput.percent.sellArea/100) * areaInput.availableArea,
-            roadSize : (areaInput.percent.roadSize/100) * areaInput.availableArea,
-            greenArea : (areaInput.percent.greenArea/100) * areaInput.availableArea
+            sellArea : (areaInput.percent.sellArea/100) * areaInput.totalArea,
+            roadSize : (areaInput.percent.roadSize/100) * areaInput.totalArea,
+            greenArea : (areaInput.percent.greenArea/100) * areaInput.totalArea
         }));
 
         const area = {
             farValue : areaInput.farValue,
             osrValue : areaInput.osrValue,
             totalArea : areaInput.totalArea,
+            availableArea : areaInput.availableArea,
             fenceLength : fenceLength,
             percent : areaInput.percent,
             ratio_area : ratio_area
@@ -232,6 +233,19 @@ class Townhouse{
 
         return profit;
     }
+
+    // ipr(property){
+    //     const spendings = this.spendings(property);
+
+    //     const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+    //     const totalHouseQty = spendings.costConstructionPerItem.map( item => item.quantity ).reduce(reducer);
+
+    //     const investmentBudget = spendings.costConstructionPerItem.map( item => item.total ).reduce(reducer);
+    //     const incomePerMonth = (totalHouseQty/4)/(12 * );
+    //     const expensePerMonth = ;
+
+    // }
 }
 
 module.exports = Townhouse;

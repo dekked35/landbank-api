@@ -18,6 +18,7 @@ class Village {
             farValue : areaInput.farValue,
             osrValue : areaInput.osrValue,
             totalArea : areaInput.totalArea,
+            availableArea : areaInput.availableArea,
             fenceLength : fenceLength,
             percent : areaInput.percent,
             ratio_area : ratio_area
@@ -280,7 +281,7 @@ class Village {
 
         return profit;
     }
-    
+
 }
 
 module.exports = Village;

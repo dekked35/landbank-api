@@ -336,12 +336,12 @@ class Hotel{
         
         const investmentValue = investmentBudget;
         const investmentValueRatio = input.ratioInvestmentValue;
-        const borrowFund = input.borrowFund;
-        const borrowFundRatio = borrowFund/investmentValueRatio;
-        const borrowFundInterest = input.interestBorrowFund;
-        const privateFund = investmentValue - borrowFund;
-        const privateFundRatio = privateFund/investmentValueRatio;
-        const privateFundInterest = input.interestPrivateFund;
+        const borrowFund = investmentValue * (input.bankLoad/100);
+        const borrowFundRatio = input.bankLoad;
+        const borrowFundInterest = input.bankInterest;
+        const privateFund = investmentValue * (input.privateCash/100);
+        const privateFundRatio = input.privateCash;
+        const privateFundInterest = input.returnRate;
 
         const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
         const netProfitPerYear = netProfitPerMonth * 12;
@@ -366,11 +366,11 @@ class Hotel{
                 financeCosts: wacc,
                 paybackPeriod: breakEvenPointMonthlyWithCash,
                 investmentValue: investmentBudget,
-                ratioInvestmentValue: input.ratioInvestmentValue,
+                ratioInvestmentValue: investmentValueRatio,
                 privateFund: privateFund,
                 ratioPrivateFund: privateFundRatio,
                 interestPrivateFund: privateFundInterest,
-                borrowFund: input.borrowFund,
+                borrowFund: borrowFund,
                 ratioBorrowFund: borrowFundRatio,
                 interestBorrowFund: borrowFundInterest,
                 borrowPeriod: input.borrowPeriod
