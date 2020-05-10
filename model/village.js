@@ -1,5 +1,7 @@
 const Util = require("../util/util");
+const Finance = require('financejs');
 const util = new Util();
+const finance = new Finance();
 
 class Village {
     constructor() {}
@@ -280,6 +282,76 @@ class Village {
         };
 
         return profit;
+    }
+
+    ipr(property){
+        const input = property.ipr_input;
+        const spendings = this.spendings(property);
+        const productInput = property.product_input.competitor.products;
+
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+        const totalHouseQty = spendings.costConstructionPerItem.map( item => item.quantity ).reduce(reducer);
+        const avgCompetitorProdCost = productInput.map(product => product.cost).reduce(reducer);
+
+        const investmentBudget = spendings.costConstructionPerItem.map( item => item.total ).reduce(reducer);
+        const incomePerMonth = totalHouseQty/4/12 * (avgCompetitorProdCost/3);
+        const expensePerMonth = totalHouseQty/4/12 * investmentBudget;
+ 
+        const bankExpensePerMonth = expensePerMonth - ((input.bankInterest/12) * (input.bankLoad * investmentBudget));
+
+        const breakEvenPointMonthlyWithCash = investmentBudget/(incomePerMonth - expensePerMonth);
+        const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
+        const breakEvenPointYearWithBank = incomePerMonth/12;
+
+        const investmentValue = investmentBudget;
+        const investmentValueRatio = input.ratioInvestmentValue;
+        const borrowFund = investmentValue * (input.bankLoad/100);
+        const borrowFundRatio = input.bankLoad;
+        const borrowFundInterest = input.bankInterest;
+        const privateFund = investmentValue * (input.privateCash/100);
+        const privateFundRatio = input.privateCash;
+        const privateFundInterest = input.returnRate;
+
+        const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
+        const incomePerYear = incomePerMonth * 12;
+        const cashflow = Array(input.cashFlowYear).fill(incomePerYear * input.cashFlowYear);
+        const npv = finance.NPV(wacc,-investmentBudget,...cashflow);
+        const irr = finance.IRR(-investmentBudget,...cashflow);
+
+        const IPR = {
+            ipr: {
+                investmentBudget: investmentBudget,
+                incomePerMonth: incomePerMonth,
+                expensePerMonth: expensePerMonth,
+                bankIncomePerMonth: incomePerMonth,
+                bankExpensePerMonth: bankExpensePerMonth,
+                breakEvenPointMonthCash: breakEvenPointMonthlyWithCash,
+                breakEvenPointYearCash: breakEvenPointYearWithCash,
+                bankLoad: input.bankLoad,
+                privateCash: input.privateCash,
+                bankInterest: input.bankInterest,
+                returnRate: input.returnRate,
+                breakEvenPointMonthBank: breakEvenPointMonthlyWithCash,
+                breakEvenPointYearBank: breakEvenPointYearWithBank,
+                cashFlowYear: input.cashFlowYear,
+                npvValue: npv,
+                irrValue: irr, 
+                financeCosts: wacc,
+                paybackPeriod: breakEvenPointMonthlyWithCash,
+                investmentValue: investmentBudget,
+                ratioInvestmentValue: investmentValueRatio,
+                privateFund: privateFund,
+                ratioPrivateFund: privateFundRatio,
+                interestPrivateFund: privateFundInterest,
+                borrowFund: borrowFund,
+                ratioBorrowFund: borrowFundRatio,
+                interestBorrowFund: borrowFundInterest,
+                borrowPeriod: input.borrowPeriod
+            }
+        }
+
+        return IPR;
     }
 
 }
