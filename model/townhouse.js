@@ -9,17 +9,21 @@ class Townhouse{
     area(property){
         const areaInput = property.area_input;
 
-        const fenceLength = 3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2;
+        const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2) + 500000;
         const ratio_area = JSON.parse(JSON.stringify({
             sellArea : (areaInput.percent.sellArea/100) * areaInput.availableArea,
             roadSize : (areaInput.percent.roadSize/100) * areaInput.availableArea,
             greenArea : (areaInput.percent.greenArea/100) * areaInput.availableArea
         }));
 
+        const total_land_price = areaInput.land_price * areaInput.totalArea;
+
         const area = {
             farValue : areaInput.farValue,
             osrValue : areaInput.osrValue,
             totalArea : areaInput.totalArea,
+            land_price: areaInput.land_price,
+            total_land_price: total_land_price,
             availableArea : areaInput.availableArea,
             fenceLength : fenceLength,
             percent : areaInput.percent,
@@ -217,10 +221,9 @@ class Townhouse{
 
         const profitPerItems = product.user.products.map(item => JSON.parse(JSON.stringify({
             type : item.type,
-            profitPerItem : item.cost,
+            profitPerItem : item.cost - (item.area * 9000) - property.spendings_input.costOther - spendings.costDevelopDone,
             noItem : item.quantity,
-            totalProfit : ((item.area * property.spendings_input.costConstructionLivingSpace) +
-                          (spendings.costDevelopDone * 21) + property.spendings_input.costOther + property.spendings_input.costPlan)
+            totalProfit: profitPerItem * noItem
         })));
         const projectProfit = profitPerItems.map(item => item.totalProfit).reduce(reducer);
         const netProfit = projectProfit - implicitCosts.costAdvtAndEmployee;

@@ -9,17 +9,21 @@ class Village {
     area(property){
         const areaInput = property.area_input;
 
-        const fenceLength = 3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2;
+        const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2) + 500000;
         const ratio_area = JSON.parse(JSON.stringify({
             sellArea : (areaInput.percent.sellArea/100) * areaInput.availableArea,
             roadSize : (areaInput.percent.roadSize/100) * areaInput.availableArea,
             greenArea : (areaInput.percent.greenArea/100) * areaInput.availableArea
         }));
+
+        const total_land_price = areaInput.land_price * areaInput.totalArea;
         
         const area = {
             farValue : areaInput.farValue,
             osrValue : areaInput.osrValue,
             totalArea : areaInput.totalArea,
+            land_price: areaInput.land_price,
+            total_land_price: total_land_price,
             availableArea : areaInput.availableArea,
             fenceLength : fenceLength,
             percent : areaInput.percent,
@@ -152,9 +156,9 @@ class Village {
         const costDevelopLand = spendingsInput.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
         const costDevelopDone = costInProject/area.ratio_area.sellArea
-        const costOneFloorConstruction = productInput[0].area * spendingsInput.costConstructionLivingSpace
-        const costTwoFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace
-        const costThreeFloorConstruction = productInput[2].area * spendingsInput.costConstructionLivingSpace
+        const costOneFloorConstruction = productInput[0].area * spendingsInput.costConstructionLivingSpace;
+        const costTwoFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace;
+        const costThreeFloorConstruction = productInput[2].area * spendingsInput.costConstructionLivingSpace;
         
         const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
@@ -235,44 +239,37 @@ class Village {
     profit(property){
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
-        const userProduct = product.user.products;
-        const spendingsInput = property.spendings_input;
+        const productInput = property.product_input.user.products;
         const buildingCost = spendings.costConstructionPerItem;
 
-        const oneFloorLandCost = userProduct[0].size * spendings.costDevelopDone;
-        const twoFloorLandCost = userProduct[1].size * spendings.costDevelopDone;
-        const threeFloorLandCost = userProduct[2].size * spendings.costDevelopDone;
-        const singleOneFloorCost = buildingCost[0].costPerItem + oneFloorLandCost + spendingsInput.costOther;
-        const singleTwoFloorCost = buildingCost[1].costPerItem + twoFloorLandCost + spendingsInput.costOther;
-        const singleThreeFloorCost = buildingCost[2].costPerItem + threeFloorLandCost + spendingsInput.costOther;
-        const singleOneFloorProfit = userProduct[0].cost - singleOneFloorCost;
-        const singleTwoFloorProfit = userProduct[1].cost - singleTwoFloorCost;
-        const singleThreeFloorProfit = userProduct[2].cost - singleThreeFloorCost;
-        const totalOneFloorProfit = singleOneFloorProfit * userProduct[0].quantity;
-        const totalTwoFloorProfit = singleTwoFloorProfit * userProduct[1].quantity;
-        const totalThreeFloorProfit = singleThreeFloorProfit * userProduct[2].quantity;
+        const singleOneFloorProfit = productInput[0].cost - buildingCost[0].costPerItem;
+        const singleTwoFloorProfit = productInput[1].cost - buildingCost[1].costPerItem;
+        const singleThreeFloorProfit = productInput[2].cost - buildingCost[2].costPerItem;
+        const totalOneFloorProfit = singleOneFloorProfit * productInput[0].quantity;
+        const totalTwoFloorProfit = singleTwoFloorProfit * productInput[1].quantity;
+        const totalThreeFloorProfit = singleThreeFloorProfit * productInput[2].quantity;
         const totalProfit = totalOneFloorProfit + totalTwoFloorProfit + totalThreeFloorProfit;
-        const netProfit = totalProfit - spendings.costInProject;
-        const averageProfitPerHouse = netProfit/ product.user.totalQuantity
+        const netProfit = totalProfit - spendings.costInProject - (spendings.costAdvtOnePer + spendings.salaryEmployee);
+        const averageProfitPerHouse = netProfit/ product.user.totalQuantity;
 
         const profit = {
             profitPerItems : [
                 {
                     type : "single floor house",
                     profitPerItem : singleOneFloorProfit,
-                    noItem : 0,
+                    noItem : productInput[0].quantity,
                     totalProfit : totalOneFloorProfit
                 },
                 {
                     type : "two floor house",
                     profitPerItem : singleTwoFloorProfit,
-                    noItem : 0,
+                    noItem : productInput[1].quantity,
                     totalProfit : totalTwoFloorProfit
                 },
                 {
                     type : "three floor house",
                     profitPerItem : singleThreeFloorProfit,
-                    noItem : 0,
+                    noItem : productInput[2].quantity,
                     totalProfit : totalThreeFloorProfit
                 }
             ],
