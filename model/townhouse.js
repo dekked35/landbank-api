@@ -138,23 +138,24 @@ class Townhouse{
         const product = this.userProduct(property);
         const input = property.spendings_input;
 
-        const constructionItems = product.user.products.map(item => JSON.parse(JSON.stringify({
-            type : item.type,
-            costPerItem : item.area * 9000,
-            quantity : item.quantity,
-            total : (item.area * 9000) * item.quantity
-        })));
-
         const roadDevelopmentCost = area.totalArea * 76;
         const roadCoverCost = (area.totalArea/4000) * 200000;
         const waterPipelineCost = area.totalArea * 76;
         const waterTreatmentCost = area.totalArea * 250;
         const electricityCost = area.totalArea * 250;
-        const guardHouseAndFenceCost = area.fenceLength * 3000;
+        const guardHouseAndFenceCost = area.fenceLength * 3000 + 500000;
         const greenAreaDevelopment = (area.totalArea * 0.5) * 3000 * 4;
         const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment + 500000;
         const totalLandCost = landDevelopmentCost + input.priceLandBought;
         const developedLand = totalLandCost/(area.totalArea * 0.65);
+
+        const constructionItems = product.user.products.map(item => JSON.parse(JSON.stringify({
+            type : item.type,
+            // TODO: item.size must be changed to sth
+            costPerItem : (item.area * input.costConstructionLivingSpace) + (item.size * developedLand) + input.costOther,
+            quantity : item.quantity,
+            total : costPerItem * item.quantity
+        })));
 
         const duration = util.duration(input.periodSellStart, input.periodSellEnd);
         const employeesSalary = input.totalSalary * duration;
@@ -221,7 +222,8 @@ class Townhouse{
 
         const profitPerItems = product.user.products.map(item => JSON.parse(JSON.stringify({
             type : item.type,
-            profitPerItem : item.cost - (item.area * 9000) - property.spendings_input.costOther - spendings.costDevelopDone,
+            // TODO: item.size must be change to sth
+            profitPerItem : item.cost - ((item.area * spendings.costConstructionLivingSpace) + (item.size * spendings.costDevelopDone) + input.costOther) - property.spendings_input.costOther - spendings.costDevelopDone,
             noItem : item.quantity,
             totalProfit: profitPerItem * noItem
         })));

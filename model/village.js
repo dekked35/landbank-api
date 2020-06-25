@@ -146,19 +146,19 @@ class Village {
         const productInput = property.product_input.user.products;
         const userProduct = product.user.products;
 
-        const costDevelopRoad = area.ratio_area.greenArea * 1250 * 4;
+        const costDevelopRoad = area.ratio_area.roadSize * 1250 * 4;
         const costRoadCover = (area.totalArea/400) * 200000;
         const costTapWater = area.totalArea * 76;
         const costWaterTreatment = area.totalArea * 250;
         const costElectricity = area.totalArea * 250;
-        const costFenceAndGuardHouse = area.fenceLength * 3000;
+        const costFenceAndGuardHouse = area.fenceLength * 3000 + 500000;
         const costDevelopGreenArea = area.ratio_area.greenArea * 3000 * 4;
         const costDevelopLand = spendingsInput.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
-        const costDevelopDone = costInProject/area.ratio_area.sellArea
-        const costOneFloorConstruction = productInput[0].area * spendingsInput.costConstructionLivingSpace;
-        const costTwoFloorConstruction = productInput[1].area * spendingsInput.costConstructionLivingSpace;
-        const costThreeFloorConstruction = productInput[2].area * spendingsInput.costConstructionLivingSpace;
+        const costDevelopDone = costInProject/area.ratio_area.sellArea;
+        const costOneFloorConstruction = (productInput[0].area * spendingsInput.costConstructionLivingSpace) + (productInput[0].size * costDevelopDone) + spendingsInput.costOther;
+        const costTwoFloorConstruction = (productInput[1].area * spendingsInput.costConstructionLivingSpace)  + (productInput[1].size * costDevelopDone) + spendingsInput.costOther;
+        const costThreeFloorConstruction = (productInput[2].area * spendingsInput.costConstructionLivingSpace)  + (productInput[2].size * costDevelopDone) + spendingsInput.costOther;
         
         const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
