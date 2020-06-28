@@ -3,6 +3,14 @@ const Finance = require('financejs');
 const util = new Util();
 const finance = new Finance();
 
+const areaFix = [
+    21,26.25,31.5
+]
+
+const priceForSell = [
+    2000000,2200000,3300000
+]
+
 class Townhouse{
     constructor(){}
 
@@ -137,7 +145,6 @@ class Townhouse{
         const area = this.area(property);
         const product = this.userProduct(property);
         const input = property.spendings_input;
-
         const roadDevelopmentCost = area.totalArea * 76;
         const roadCoverCost = (area.totalArea/4000) * 200000;
         const waterPipelineCost = area.totalArea * 76;
@@ -148,14 +155,13 @@ class Townhouse{
         const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment + 500000;
         const totalLandCost = landDevelopmentCost + input.priceLandBought;
         const developedLand = totalLandCost/(area.totalArea * 0.65);
-
-        const constructionItems = product.user.products.map(item => JSON.parse(JSON.stringify({
-            type : item.type,
-            // TODO: item.size must be changed to sth
-            costPerItem : (item.area * input.costConstructionLivingSpace) + (item.size * developedLand) + input.costOther,
-            quantity : item.quantity,
-            total : costPerItem * item.quantity
-        })));
+        const constructionItems = product.user.products.map((item,index) => {
+            return JSON.parse(JSON.stringify({
+                type : item.type,
+                costPerItem : (item.area * input.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * developedLand : areaFix[0] * developedLand) + input.costOther,
+                quantity : item.quantity,
+                total : ((item.area * input.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * developedLand : areaFix[0] * developedLand) + input.costOther) * item.quantity
+            }))});
 
         const duration = util.duration(input.periodSellStart, input.periodSellEnd);
         const employeesSalary = input.totalSalary * duration;
@@ -220,12 +226,13 @@ class Townhouse{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const profitPerItems = product.user.products.map(item => JSON.parse(JSON.stringify({
+        const profitPerItems = product.user.products.map((item,index) =>   JSON.parse(JSON.stringify({
             type : item.type,
             // TODO: item.size must be change to sth
-            profitPerItem : item.cost - ((item.area * spendings.costConstructionLivingSpace) + (item.size * spendings.costDevelopDone) + input.costOther) - property.spendings_input.costOther - spendings.costDevelopDone,
+            // profitPerItem : item.cost - ((item.area * spendings.costConstructionLivingSpace) + (item.size * spendings.costDevelopDone) + spendings.costOther) - property.spendings_input.costOther - spendings.costDevelopDone,
+            profitPerItem : priceForSell[index] - ((item.area * spendings.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * spendings.costDevelopDone : areaFix[0] * spendings.costDevelopDone) + spendings.costOther),
             noItem : item.quantity,
-            totalProfit: profitPerItem * noItem
+            totalProfit: (priceForSell[index] - ((item.area * spendings.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * spendings.costDevelopDone : areaFix[0] * spendings.costDevelopDone) + spendings.costOther)) * item.quantity
         })));
         const projectProfit = profitPerItems.map(item => item.totalProfit).reduce(reducer);
         const netProfit = projectProfit - implicitCosts.costAdvtAndEmployee;
