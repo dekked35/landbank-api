@@ -15,9 +15,7 @@ class Hotel{
             parking: (input.percent.parking/100) * availableArea,
             outdoor: (input.percent.outdoor/100) * availableArea
         }));
-
-        const costLand = (input.costLand > 0) ? input.costLand : input.deposit + (input.rentNoYear * 12 * input.rentPerMonth);
-
+        const costLand = (input.costLandType === 'rent') ? input.deposit + (input.rentNoYear * 12 * input.rentPerMonth) :  input.costLand;
         const area = {
             townPlanColor : input.farValue,
             farValue : input.farValue,
@@ -26,9 +24,12 @@ class Hotel{
             availableArea : availableArea,
             percent : input.percent,
             ratio_area : newRatio,
-            costLand : costLand
+            costLand : costLand,
+            deposit : input.deposit,
+            rentNoYear : input.rentNoYear,
+            rentPerMonth : input.rentPerMonth,
+            costLandType : input.costLandType
         };
-
         return area;
     }
 
