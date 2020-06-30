@@ -57,13 +57,13 @@ class Townhouse{
         const input = property.product_input.user;
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
-
         const newProducts = productInput.map(product => JSON.parse(JSON.stringify({
             type : product.type,
             area : product.area,
             stairArea : 2.2 * (input.depth * 0.5),
             cost : product.cost,
             ratio : product.ratio,
+            size : product.size,
             quantity : parseInt(((product.ratio/100) * area.totalArea)/(product.area * 4))
         })));
 
@@ -109,6 +109,7 @@ class Townhouse{
             stairArea : 2.2 * (input.depth * 0.5),
             cost : product.cost,
             ratio : product.ratio,
+            size : product.size,
             quantity : parseInt(((product.ratio/100) * area.totalArea)/(product.area * 4))
         })));
 
@@ -158,9 +159,9 @@ class Townhouse{
         const constructionItems = product.user.products.map((item,index) => {
             return JSON.parse(JSON.stringify({
                 type : item.type,
-                costPerItem : (item.area * input.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * developedLand : areaFix[0] * developedLand) + input.costOther,
+                costPerItem : (item.area * input.costConstructionLivingSpace) + (item.size * developedLand) + input.costOther,
                 quantity : item.quantity,
-                total : ((item.area * input.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * developedLand : areaFix[0] * developedLand) + input.costOther) * item.quantity
+                total : ((item.area * input.costConstructionLivingSpace) + (item.size * developedLand) + input.costOther) * item.quantity
             }))});
 
         const duration = util.duration(input.periodSellStart, input.periodSellEnd);
@@ -230,9 +231,9 @@ class Townhouse{
             type : item.type,
             // TODO: item.size must be change to sth
             // profitPerItem : item.cost - ((item.area * spendings.costConstructionLivingSpace) + (item.size * spendings.costDevelopDone) + spendings.costOther) - property.spendings_input.costOther - spendings.costDevelopDone,
-            profitPerItem : priceForSell[index] - ((item.area * spendings.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * spendings.costDevelopDone : areaFix[0] * spendings.costDevelopDone) + spendings.costOther),
+            profitPerItem : priceForSell[index] - ((item.area * spendings.costConstructionLivingSpace) + (item.size* spendings.costDevelopDone) + spendings.costOther),
             noItem : item.quantity,
-            totalProfit: (priceForSell[index] - ((item.area * spendings.costConstructionLivingSpace) + (item.sizeArea ? areaFix[item.sizeArea] * spendings.costDevelopDone : areaFix[0] * spendings.costDevelopDone) + spendings.costOther)) * item.quantity
+            totalProfit: (priceForSell[index] - ((item.area * spendings.costConstructionLivingSpace) + (item.size* spendings.costDevelopDone) + spendings.costOther)) * item.quantity
         })));
         const projectProfit = profitPerItems.map(item => item.totalProfit).reduce(reducer);
         const netProfit = projectProfit - implicitCosts.costAdvtAndEmployee;
