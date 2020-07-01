@@ -55,7 +55,6 @@ class Townhouse{
         const area = this.area(property);
         const productInput = property.product_input.user.products;
         const input = property.product_input.user;
-
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
         const newProducts = productInput.map(product => JSON.parse(JSON.stringify({
             type : product.type,
@@ -64,7 +63,7 @@ class Townhouse{
             cost : product.cost,
             ratio : product.ratio,
             size : product.size,
-            quantity : parseInt(((product.ratio/100) * area.totalArea)/(product.area * 4))
+            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/(parseFloat(product.size)))
         })));
 
         const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
@@ -92,7 +91,6 @@ class Townhouse{
                 totalCost : totalNewProductPrice
             }
         }
-
         return userProduct;
     }
 
