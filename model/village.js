@@ -11,9 +11,9 @@ class Village {
 
         const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2);
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : (areaInput.percent.sellArea/100) * areaInput.availableArea,
-            roadSize : (areaInput.percent.roadSize/100) * areaInput.availableArea,
-            greenArea : (areaInput.percent.greenArea/100) * areaInput.availableArea
+            sellArea : (areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea,
+            roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
+            greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea
         }));
 
         const total_land_price = areaInput.land_price * areaInput.totalArea;
