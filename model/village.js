@@ -13,7 +13,8 @@ class Village {
         const ratio_area = JSON.parse(JSON.stringify({
             sellArea : (areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea,
             roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
-            greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea
+            greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea,
+            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea
         }));
 
         const total_land_price = areaInput.land_price * areaInput.totalArea;
