@@ -3,13 +3,11 @@ const Finance = require('financejs');
 const util = new Util();
 const finance = new Finance();
 
-const areaFix = [
-    21,26.25,31.5
-]
-
-const priceForSell = [
-    2000000,2200000,3300000
-]
+const centerCost = {
+    swimming : 15000,
+    fitnessZone : 15000,
+    officeZone : 25000
+}
 
 class Townhouse{
     constructor(){}
@@ -19,9 +17,10 @@ class Townhouse{
 
         const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2);
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : (areaInput.percent.sellArea/100) * areaInput.availableArea,
-            roadSize : (areaInput.percent.roadSize/100) * areaInput.availableArea,
-            greenArea : (areaInput.percent.greenArea/100) * areaInput.availableArea
+            sellArea : (areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea,
+            roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
+            greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea,
+            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea
         }));
 
         const total_land_price = areaInput.land_price * areaInput.totalArea;
@@ -42,11 +41,15 @@ class Townhouse{
     }
 
     product(property){
+        const areaInput = property.area_input;
         const competitorProduct = this.competitorProduct(property);
         const userProduct = this.userProduct(property);
+        const centerArea = areaInput.standardArea.centerArea
+
         const product = {
             competitor : competitorProduct.competitor,
-            user : userProduct.user
+            user : userProduct.user,
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
         }
         return product;
     }
@@ -63,7 +66,7 @@ class Townhouse{
             cost : product.cost,
             ratio : product.ratio,
             size : product.size,
-            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/(parseFloat(product.size)))
+            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/(parseFloat(product.size)*4))
         })));
 
         const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
@@ -143,7 +146,9 @@ class Townhouse{
     spendings(property){
         const area = this.area(property);
         const product = this.userProduct(property);
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
         const input = property.spendings_input;
+        const areaInput = property.area_input
         const roadDevelopmentCost = area.ratio_area.roadSize * 1250 *4;
         const roadCoverCost = (area.totalArea/400) * 200000;
         const waterPipelineCost = area.totalArea * 76;
@@ -165,7 +170,9 @@ class Townhouse{
         const duration = util.duration(input.periodSellStart, input.periodSellEnd);
         const employeesSalary = input.totalSalary * duration;
         const adCost = product.user.totalCost * 0.01;
-
+        let centerArea = areaInput.standardArea.centerArea
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+        const centerPrice = centerArea.reduce(reducer)
         const spendings = {
             priceLandBought : input.priceLandBought,
             costConstructionLivingSpace : input.costConstructionLivingSpace,
@@ -189,7 +196,8 @@ class Townhouse{
             totalSalary : input.totalSalary,
             salaryEmployee : employeesSalary,
             costAdvt : input.costAdvt,
-            costAdvtOnePer : adCost
+            costAdvtOnePer : adCost,
+            centerCost : centerPrice
         };
 
         return spendings;

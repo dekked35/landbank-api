@@ -3,6 +3,12 @@ const Finance = require('financejs');
 const util = new Util();
 const finance = new Finance();
 
+const centerCost = {
+    swimming : 15000,
+    fitnessZone : 15000,
+    officeZone : 25000
+}
+
 class Village {
     constructor() {}
 
@@ -35,11 +41,15 @@ class Village {
     }
 
     product(property){
+        const areaInput = property.area_input;
         const competitorProduct = this.competitorProduct(property);
         const userProduct = this.userProduct(property);
+        const centerArea = areaInput.standardArea.centerArea
+
         const product = {
             competitor : competitorProduct.competitor,
-            user : userProduct.user
+            user : userProduct.user,
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
         }
         return product;
     }
@@ -47,10 +57,9 @@ class Village {
     competitorProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.competitor.products;
-
-        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/productInput[0].size);
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/productInput[1].size);
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/productInput[2].size);
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size*4));
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size*4));
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size*4));
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -95,9 +104,9 @@ class Village {
     userProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.user.products;
-        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/productInput[0].size);
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/productInput[1].size);
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/productInput[2].size);
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size * 4));
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size * 4));
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size * 4));
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -143,6 +152,8 @@ class Village {
         const area = this.area(property);
         const product = this.userProduct(property);
         const spendingsInput = property.spendings_input;
+        const areaInput = property.area_input
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
         const productInput = property.product_input.user.products;
         const userProduct = product.user.products;
@@ -168,6 +179,9 @@ class Village {
         const salaryEmployee = duration * spendingsInput.salaryEmployee;
         const costAdvtOnePer = product.user.totalCost * 0.01;
         const costAdvt = costAdvtOnePer * duration;
+        let centerArea = areaInput.standardArea.centerArea
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+        const centerPrice = centerArea.reduce(reducer)
 
         const spendings = {
             priceLandBought : spendingsInput.priceLandBought,
@@ -211,7 +225,8 @@ class Village {
             totalSalary : spendingsInput.salaryEmployee,
             salaryEmployee : salaryEmployee,
             costAdvtOnePer : costAdvtOnePer,
-            costAdvt : costAdvt
+            costAdvt : costAdvt,
+            centerCost : centerPrice
         };
 
         return spendings;
