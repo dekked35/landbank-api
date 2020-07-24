@@ -9,6 +9,10 @@ const centerCost = {
     officeZone : 25000
 }
 
+const level = [
+    2,3,4
+]
+
 class Townhouse{
     constructor(){}
 
@@ -49,7 +53,7 @@ class Townhouse{
         const product = {
             competitor : competitorProduct.competitor,
             user : userProduct.user,
-            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4)
         }
         return product;
     }
@@ -59,24 +63,28 @@ class Townhouse{
         const productInput = property.product_input.user.products;
         const input = property.product_input.user;
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
-        const newProducts = productInput.map(product => JSON.parse(JSON.stringify({
-            type : product.type,
-            area : product.area,
-            stairArea : 2.2 * (input.depth * 0.5),
-            cost : product.cost,
-            ratio : product.ratio,
-            size : product.size,
-            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/(parseFloat(product.size)*4))
-        })));
-
-        const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
-        const totalNewProductPrice = newProducts.map(product => product.quantity * product.cost).reduce(reducer);
-
+        const stair1 = input.width * input.depth / 12
+        
         const centralArea = input.depth * input.width;
         const frontArea = input.width * input.frontDepth;
         const behindArea = input.width * input.behindDepth;
         const totalAreaMeter = centralArea + frontArea + behindArea;
         const totalAreaSquare = totalAreaMeter/4;
+        
+        const newProducts = productInput.map((product,index) => JSON.parse(JSON.stringify({
+            type : product.type,
+            // area : product.area,
+            area : (level[index] * (input.width * input.depth - stair1)) + frontArea + behindArea,
+            // stairArea : 2.2 * (input.depth * 0.5),
+            stairArea : stair1 * level[index],
+            cost : product.cost,
+            ratio : product.ratio,
+            size : product.size,
+            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/totalAreaMeter)
+        })));
+        
+        const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
+        const totalNewProductPrice = newProducts.map(product => product.quantity * product.cost).reduce(reducer);
 
         const userProduct = {
             user : {
@@ -100,28 +108,30 @@ class Townhouse{
     competitorProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.competitor.products;
-        const input = property.product_input.competitor;
-
+        const input = property.product_input.user;
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
-
-        const newProducts = productInput.map(product => JSON.parse(JSON.stringify({
-            type : product.type,
-            area : product.area,
-            stairArea : 2.2 * (input.depth * 0.5),
-            cost : product.cost,
-            ratio : product.ratio,
-            size : product.size,
-            quantity : parseInt(((product.ratio/100) * area.totalArea)/(product.area * 4))
-        })));
-
-        const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
-        const totalNewProductPrice = newProducts.map(product => product.quantity * product.cost).reduce(reducer);
-
+        const stair1 = input.width * input.depth / 12
+        
         const centralArea = input.depth * input.width;
         const frontArea = input.width * input.frontDepth;
         const behindArea = input.width * input.behindDepth;
         const totalAreaMeter = centralArea + frontArea + behindArea;
         const totalAreaSquare = totalAreaMeter/4;
+        
+        const newProducts = productInput.map((product,index) => JSON.parse(JSON.stringify({
+            type : product.type,
+            // area : product.area,
+            area : (level[index] * (input.width * input.depth - stair1)) + frontArea + behindArea,
+            // stairArea : 2.2 * (input.depth * 0.5),
+            stairArea : stair1 * level[index],
+            cost : product.cost,
+            ratio : product.ratio,
+            size : product.size,
+            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/totalAreaMeter)
+        })));
+        
+        const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
+        const totalNewProductPrice = newProducts.map(product => product.quantity * product.cost).reduce(reducer);
 
         const competitorProduct = {
             competitor : {
@@ -154,7 +164,7 @@ class Townhouse{
         const waterPipelineCost = area.totalArea * 76;
         const waterTreatmentCost = area.totalArea * 250;
         const electricityCost = area.totalArea * 250;
-        const guardHouseAndFenceCost = area.fenceLength * 3000 + 500000;
+        const guardHouseAndFenceCost = area.fenceLength * 3000;
         const greenAreaDevelopment = (area.ratio_area.greenArea) * 3000 * 4;
         const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment + input.costPlan;
         const totalLandCost = landDevelopmentCost + input.priceLandBought;
@@ -163,6 +173,7 @@ class Townhouse{
             return JSON.parse(JSON.stringify({
                 type : item.type,
                 costPerItem : (item.stairArea * input.costConstructionLivingSpace) + (item.area * developedLand) + input.costOther,
+                // costPerItem : ๖ + input.costOther,
                 quantity : item.quantity,
                 total : ((item.stairArea * input.costConstructionLivingSpace) + (item.area * developedLand) + input.costOther) * item.quantity
             }))});
@@ -171,7 +182,7 @@ class Townhouse{
         const employeesSalary = input.totalSalary * duration;
         const adCost = product.user.totalCost * 0.01;
         let centerArea = areaInput.standardArea.centerArea
-        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4)
         const centerPrice = centerArea.reduce(reducer)
         const spendings = {
             priceLandBought : input.priceLandBought,

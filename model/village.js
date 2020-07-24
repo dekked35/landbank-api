@@ -49,7 +49,7 @@ class Village {
         const product = {
             competitor : competitorProduct.competitor,
             user : userProduct.user,
-            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4)
         }
         return product;
     }
@@ -163,7 +163,7 @@ class Village {
         const costTapWater = area.totalArea * 76;
         const costWaterTreatment = area.totalArea * 250;
         const costElectricity = area.totalArea * 250;
-        const costFenceAndGuardHouse = area.fenceLength * 3000 + 500000;
+        const costFenceAndGuardHouse = area.fenceLength * 3000;
         const costDevelopGreenArea = area.ratio_area.greenArea * 3000 * 4;
         const costDevelopLand = spendingsInput.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
@@ -180,7 +180,7 @@ class Village {
         const costAdvtOnePer = product.user.totalCost * 0.01;
         const costAdvt = costAdvtOnePer * duration;
         let centerArea = areaInput.standardArea.centerArea
-        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4)
         const centerPrice = centerArea.reduce(reducer)
 
         const spendings = {
