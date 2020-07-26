@@ -49,7 +49,7 @@ class Village {
         const product = {
             competitor : competitorProduct.competitor,
             user : userProduct.user,
-            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4)
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4 /1.25)
         }
         return product;
     }
@@ -104,9 +104,9 @@ class Village {
     userProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.user.products;
-        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size * 4));
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size * 4));
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size * 4));
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size ));
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size ));
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size ));
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -157,7 +157,6 @@ class Village {
 
         const productInput = property.product_input.user.products;
         const userProduct = product.user.products;
-
         const costDevelopRoad = area.ratio_area.roadSize * 1250 * 4;
         const costRoadCover = (area.totalArea/400) * 200000;
         const costTapWater = area.totalArea * 76;
@@ -165,24 +164,22 @@ class Village {
         const costElectricity = area.totalArea * 250;
         const costFenceAndGuardHouse = area.fenceLength * 3000;
         const costDevelopGreenArea = area.ratio_area.greenArea * 3000 * 4;
-        const costDevelopLand = spendingsInput.costPlan + costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea;
+        let centerArea = areaInput.standardArea.centerArea
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4 /1.25)
+        const centerPrice = centerArea.reduce(reducer)
+        const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
+        const salaryEmployee = duration * spendingsInput.salaryEmployee;
+        const costPerOneMonth = (spendingsInput.costCommission * (userProduct[0].quantity + userProduct[1].quantity + userProduct[2].quantity)) + spendingsInput.costAdvt + (salaryEmployee * spendingsInput.noEmployee)
+        const costDevelopLand = costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea + centerPrice + costPerOneMonth;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
         const costDevelopDone = costInProject/area.ratio_area.sellArea;
-        const costOneFloorConstruction = (productInput[0].area * spendingsInput.costConstructionLivingSpace) + (productInput[0].size * costDevelopDone) + spendingsInput.costOther;
-        const costTwoFloorConstruction = (productInput[1].area * spendingsInput.costConstructionLivingSpace)  + (productInput[1].size * costDevelopDone) + spendingsInput.costOther;
-        const costThreeFloorConstruction = (productInput[2].area * spendingsInput.costConstructionLivingSpace)  + (productInput[2].size * costDevelopDone) + spendingsInput.costOther;
-        
-        const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
+        const costOneFloorConstruction = (productInput[0].area * spendingsInput.costConstructionLivingSpace) + spendingsInput.costOther + spendingsInput.costPlan;
+        const costTwoFloorConstruction = (productInput[1].area * spendingsInput.costConstructionLivingSpace) + spendingsInput.costOther + spendingsInput.costPlan;
+        const costThreeFloorConstruction = (productInput[2].area * spendingsInput.costConstructionLivingSpace) + spendingsInput.costOther + spendingsInput.costPlan;
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
         const costTwoFloorConstructionTotal = costTwoFloorConstruction * userProduct[1].quantity;
         const costThreeFloorConstructionTotal = costThreeFloorConstruction * userProduct[2].quantity;
-        const salaryEmployee = duration * spendingsInput.salaryEmployee;
         const costAdvtOnePer = product.user.totalCost * 0.01;
-        const costAdvt = costAdvtOnePer * duration;
-        let centerArea = areaInput.standardArea.centerArea
-        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 4)
-        const centerPrice = centerArea.reduce(reducer)
-
         const spendings = {
             priceLandBought : spendingsInput.priceLandBought,
             costConstructionLivingSpace : spendingsInput.costConstructionLivingSpace,
@@ -224,8 +221,9 @@ class Village {
             noEmployee : spendingsInput.noEmployee,
             totalSalary : spendingsInput.salaryEmployee,
             salaryEmployee : salaryEmployee,
+            costAdvt : spendingsInput.costAdvt,
             costAdvtOnePer : costAdvtOnePer,
-            costAdvt : costAdvt,
+            costCommission : spendingsInput.costCommission,
             centerCost : centerPrice
         };
 
@@ -238,7 +236,7 @@ class Village {
         const spendings = this.spendings(property);
         const productInput = property.product_input.user.products
 
-        const costLand = (productInput[0].size + productInput[1].size + productInput[2].size) * spendings.costDevelopDone;
+        const costLand = spendings.costInProject / area.ratio_area.sellArea;
         const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
 
         const implicitCosts = {
