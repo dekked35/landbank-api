@@ -79,8 +79,8 @@ class Townhouse{
             stairArea : stair1 * level[index],
             cost : product.cost,
             ratio : product.ratio,
-            size : product.size,
-            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/totalAreaMeter)
+            size : totalAreaMeter,
+            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea * 4)/totalAreaMeter)
         })));
         
         const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
@@ -126,8 +126,8 @@ class Townhouse{
             stairArea : stair1 * level[index],
             cost : product.cost,
             ratio : product.ratio,
-            size : product.size,
-            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea)/totalAreaMeter)
+            size : totalAreaMeter,
+            quantity : parseInt(((product.ratio/100) * area.ratio_area.sellArea * 4)/totalAreaMeter)
         })));
         
         const newProductsQty = newProducts.map(product => product.quantity).reduce(reducer);
@@ -211,6 +211,7 @@ class Townhouse{
             costAdvt : input.costAdvt,
             costAdvtOnePer : costAdvtOnePer,
             costCommission : input.costCommission,
+            costPerOneMonth : costPerOneMonth
             // centerCost : centerPrice
         };
 

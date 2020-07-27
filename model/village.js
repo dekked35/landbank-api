@@ -57,9 +57,9 @@ class Village {
     competitorProduct(property){
         const area = this.area(property);
         const productInput = property.product_input.competitor.products;
-        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size*4));
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size*4));
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size*4));
+        const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size));
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size));
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size));
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -105,8 +105,8 @@ class Village {
         const area = this.area(property);
         const productInput = property.product_input.user.products;
         const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size ));
-        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size ));
-        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size ));
+        const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size));
+        const threeFloorQty = parseInt(((productInput[2].ratio/100) * area.ratio_area.sellArea)/(productInput[2].size));
         const totalFloorQty = oneFloorQty + twoFloorQty + threeFloorQty;
         const totalCost =   (oneFloorQty * productInput[0].cost) + 
                             (twoFloorQty * productInput[1].cost) + 
@@ -224,7 +224,8 @@ class Village {
             costAdvt : spendingsInput.costAdvt,
             costAdvtOnePer : costAdvtOnePer,
             costCommission : spendingsInput.costCommission,
-            centerCost : centerPrice
+            centerCost : centerPrice,
+            costPerOneMonth : costPerOneMonth
         };
 
         return spendings;
