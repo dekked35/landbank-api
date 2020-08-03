@@ -181,7 +181,7 @@ class Village {
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
         const costTwoFloorConstructionTotal = costTwoFloorConstruction * userProduct[1].quantity;
         const costThreeFloorConstructionTotal = costThreeFloorConstruction * userProduct[2].quantity;
-        const costAdvtOnePer = product.user.totalCost * 0.01;
+        const costAdvtOnePer = product.user.totalCost * spendingsInput.percentCostAdvt / 100;
         const spendings = {
             priceLandBought : spendingsInput.priceLandBought,
             costConstructionLivingSpace : spendingsInput.costConstructionLivingSpace,
@@ -227,7 +227,8 @@ class Village {
             costAdvtOnePer : costAdvtOnePer,
             costCommission : spendingsInput.costCommission,
             centerCost : centerPrice,
-            costPerOneMonth : costPerOneMonth
+            costPerOneMonth : costPerOneMonth,
+            percentCostAdvt : spendingsInput.percentCostAdvt
         };
 
         return spendings;

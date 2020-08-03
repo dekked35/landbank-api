@@ -185,7 +185,7 @@ class Townhouse{
             }))});
 
         const employeesSalary = input.totalSalary * duration;
-        const costAdvtOnePer = product.user.totalCost * 0.01;
+        const costAdvtOnePer = product.user.totalCost * input.percentCostAdvt / 100;
         const spendings = {
             priceLandBought : input.priceLandBought,
             costConstructionLivingSpace : input.costConstructionLivingSpace,
@@ -212,6 +212,7 @@ class Townhouse{
             costAdvtOnePer : costAdvtOnePer,
             costCommission : input.costCommission,
             costPerOneMonth : costPerOneMonth,
+            percentCostAdvt : input.percentCostAdvt
             // centerCost : centerPrice
         };
 
