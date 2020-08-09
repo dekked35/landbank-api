@@ -48,7 +48,7 @@ class Village {
         const product = {
             competitor : competitorProduct.competitor,
             user : userProduct.user,
-            centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] )
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * 1.25 *centerCost[item] )
         }
         return product;
     }
@@ -164,24 +164,21 @@ class Village {
         const costFenceAndGuardHouse = area.fenceLength * 3000;
         const costDevelopGreenArea = area.ratio_area.greenArea * 3000 * 4;
         let centerArea = areaInput.standardArea.centerArea
-        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 1.25)
         const centerPrice = centerArea.reduce(reducer)
         const duration = util.duration(spendingsInput.periodSellStart,spendingsInput.periodSellEnd);
+        const costAdvtOnePer = product.user.totalCost * spendingsInput.percentCostAdvt / 100;
         const salaryEmployee = duration * spendingsInput.salaryEmployee;
-        const costPerOneMonth = (spendingsInput.costCommission * (userProduct[0].quantity + userProduct[1].quantity + userProduct[2].quantity)) + spendingsInput.costAdvt + (salaryEmployee * spendingsInput.noEmployee)
-        const costDevelopLand = costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea + centerPrice + spendingsInput.costPlan ;
+        const costPerOneMonth = (spendingsInput.costCommission * (userProduct[0].quantity + userProduct[1].quantity + userProduct[2].quantity)) + spendingsInput.costAdvt + (salaryEmployee * spendingsInput.noEmployee) + costAdvtOnePer
+        const costDevelopLand = costDevelopRoad + costRoadCover + costTapWater + costWaterTreatment + costElectricity + costFenceAndGuardHouse + costDevelopGreenArea + centerPrice + spendingsInput.costPlan + costPerOneMonth ;
         const costInProject = costDevelopLand + spendingsInput.priceLandBought;
         const costDevelopDone = costInProject/area.ratio_area.sellArea;
-        // const costOneFloorConstruction = (productInput[0].area * spendingsInput.costConstructionLivingSpace) + spendingsInput.costOther + spendingsInput.costPlan;
-        // const costTwoFloorConstruction = (productInput[1].area * spendingsInput.costConstructionLivingSpace) + spendingsInput.costOther + spendingsInput.costPlan;
-        // const costThreeFloorConstruction = (productInput[2].area * spendingsInput.costConstructionLivingSpace) + spendingsInput.costOther + spendingsInput.costPlan;
         const costOneFloorConstruction = (productInput[0].area * spendingsInput.costConstructionLivingSpace) + (productInput[0].size * (costInProject/area.ratio_area.sellArea)) + spendingsInput.costOther;
         const costTwoFloorConstruction = (productInput[1].area * spendingsInput.costConstructionLivingSpace) + (productInput[1].size * (costInProject/area.ratio_area.sellArea)) + spendingsInput.costOther;
         const costThreeFloorConstruction = (productInput[2].area * spendingsInput.costConstructionLivingSpace) + (productInput[2].size * (costInProject/area.ratio_area.sellArea)) + spendingsInput.costOther;
         const costOneFloorConstructionTotal = costOneFloorConstruction * userProduct[0].quantity;
         const costTwoFloorConstructionTotal = costTwoFloorConstruction * userProduct[1].quantity;
         const costThreeFloorConstructionTotal = costThreeFloorConstruction * userProduct[2].quantity;
-        const costAdvtOnePer = product.user.totalCost * spendingsInput.percentCostAdvt / 100;
         const spendings = {
             priceLandBought : spendingsInput.priceLandBought,
             costConstructionLivingSpace : spendingsInput.costConstructionLivingSpace,
@@ -199,19 +196,22 @@ class Village {
             costDevelopDone : costDevelopDone,
             costConstructionPerItem : [
                 {
-                    type : "single floor house",
+                    // type : "single floor house",
+                    type : "บ้าน 1 ชั้น",
                     costPerItem: costOneFloorConstruction,
                     quantity : userProduct[0].quantity,
                     total : costOneFloorConstructionTotal
                 },
                 {
-                    type : "two floor house",
+                    // type : "two floor house",
+                    type : "บ้าน 2 ชั้น",
                     costPerItem: costTwoFloorConstruction,
                     quantity : userProduct[1].quantity,
                     total : costTwoFloorConstructionTotal
                 },
                 {
-                    type : "three floor house",
+                    // type : "three floor house",
+                    type : "บ้าน 3 ชั้น",
                     costPerItem: costThreeFloorConstruction,
                     quantity : userProduct[2].quantity,
                     total : costThreeFloorConstructionTotal
@@ -238,7 +238,6 @@ class Village {
         const area = this.area(property);
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
-        const productInput = property.product_input.user.products
 
         const costLand = spendings.costInProject / area.ratio_area.sellArea;
         const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
@@ -273,19 +272,22 @@ class Village {
         const profit = {
             profitPerItems : [
                 {
-                    type : "single floor house",
+                    // type : "single floor house",
+                    type : "บ้าน 1 ชั้น",
                     profitPerItem : singleOneFloorProfit,
                     noItem : productInput[0].quantity,
                     totalProfit : totalOneFloorProfit
                 },
                 {
-                    type : "two floor house",
+                    // type : "two floor house",
+                    type : "บ้าน 2 ชั้น",
                     profitPerItem : singleTwoFloorProfit,
                     noItem : productInput[1].quantity,
                     totalProfit : totalTwoFloorProfit
                 },
                 {
-                    type : "three floor house",
+                    // type : "three floor house",
+                    type : "บ้าน 3 ชั้น",
                     profitPerItem : singleThreeFloorProfit,
                     noItem : productInput[2].quantity,
                     totalProfit : totalThreeFloorProfit

@@ -24,6 +24,7 @@ class Townhouse{
             sellArea : (areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea,
             roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
             greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea,
+            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea
         }));
 
         const total_land_price = areaInput.land_price * areaInput.totalArea;
@@ -47,12 +48,12 @@ class Townhouse{
         const areaInput = property.area_input;
         const competitorProduct = this.competitorProduct(property);
         const userProduct = this.userProduct(property);
-        // const centerArea = areaInput.standardArea.centerArea
+        const centerArea = areaInput.standardArea.centerArea
 
         const product = {
             competitor : competitorProduct.competitor,
             user : userProduct.user,
-            // centerArea : Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * 1.25 * centerCost[item])
         }
         return product;
     }
@@ -167,13 +168,14 @@ class Townhouse{
         const electricityCost = area.totalArea * 250;
         const guardHouseAndFenceCost = area.fenceLength * 3000;
         const greenAreaDevelopment = (area.ratio_area.greenArea) * 3000 * 4;
-        // let centerArea = areaInput.standardArea.centerArea
-        // centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
-        // const centerPrice = centerArea.reduce(reducer)
+        let centerArea = areaInput.standardArea.centerArea
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 1.25)
+        const centerPrice = centerArea.reduce(reducer)
         const duration = util.duration(input.periodSellStart, input.periodSellEnd);
         const salaryEmployee = duration * input.salaryEmployee;
-        const costPerOneMonth = (input.costCommission * (userProduct[0].quantity + userProduct[1].quantity + userProduct[2].quantity)) + input.costAdvt + (salaryEmployee * input.noEmployee)
-        const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment + /*centerPrice +*/ input.costPlan;
+        const costAdvtOnePer = product.user.totalCost * input.percentCostAdvt / 100;
+        const costPerOneMonth = (input.costCommission * (userProduct[0].quantity + userProduct[1].quantity + userProduct[2].quantity)) + input.costAdvt + (salaryEmployee * input.noEmployee) + costAdvtOnePer
+        const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment + centerPrice + costPerOneMonth + input.costPlan;
         const totalLandCost = landDevelopmentCost + input.priceLandBought;
         const developedLand = totalLandCost/(area.ratio_area.sellArea);
         const constructionItems = product.user.products.map((item,index) => {
@@ -185,7 +187,6 @@ class Townhouse{
             }))});
 
         const employeesSalary = input.totalSalary * duration;
-        const costAdvtOnePer = product.user.totalCost * input.percentCostAdvt / 100;
         const spendings = {
             priceLandBought : input.priceLandBought,
             costConstructionLivingSpace : input.costConstructionLivingSpace,
@@ -212,8 +213,8 @@ class Townhouse{
             costAdvtOnePer : costAdvtOnePer,
             costCommission : input.costCommission,
             costPerOneMonth : costPerOneMonth,
-            percentCostAdvt : input.percentCostAdvt
-            // centerCost : centerPrice
+            percentCostAdvt : input.percentCostAdvt,
+            centerCost : centerPrice
         };
 
         return spendings;
@@ -272,9 +273,9 @@ class Townhouse{
         const electricityCost = area.totalArea * 250;
         const guardHouseAndFenceCost = area.fenceLength * 3000;
         const greenAreaDevelopment = (area.ratio_area.greenArea) * 3000 * 4;
-        // let centerArea = areaInput.standardArea.centerArea
-        // centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
-        // const centerPrice = centerArea.reduce(reducer)
+        let centerArea = areaInput.standardArea.centerArea
+        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
+        const centerPrice = centerArea.reduce(reducer)
         const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment /*+ centerPrice*/ + spendings.costPlan;
         const totalLandCost = landDevelopmentCost + spendings.priceLandBought;
         const developedLand = totalLandCost/(area.ratio_area.sellArea);
