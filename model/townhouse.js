@@ -53,7 +53,7 @@ class Townhouse{
         const product = {
             competitor : competitorProduct.competitor,
             user : userProduct.user,
-            centerArea : Object.keys(centerArea).map( item => centerArea[item] * 1.25 * centerCost[item])
+            centerArea : Object.keys(centerArea).map( item => centerArea[item] * 1.25 * centerCost[item]),
             isCompetitor : property.product_input.isCompetitor
         }
         return product;
