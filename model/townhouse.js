@@ -54,6 +54,7 @@ class Townhouse{
             competitor : competitorProduct.competitor,
             user : userProduct.user,
             centerArea : Object.keys(centerArea).map( item => centerArea[item] * 1.25 * centerCost[item])
+            isCompetitor : property.product_input.isCompetitor
         }
         return product;
     }
@@ -261,7 +262,8 @@ class Townhouse{
         const spendings = this.spendings(property);
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
         const implicitCosts = this.implicitCosts(property);
-        const input = property.product_input.user;
+        const inputUser = property.product_input.user.products;
+        const inputCom = property.product_input.competitor.products;
         const inputSpendings = property.spendings_input;
         const areaInput = property.area_input
         const allProductSize = product.user.totalAreaSquare;
@@ -280,7 +282,14 @@ class Townhouse{
         const totalLandCost = landDevelopmentCost + spendings.priceLandBought;
         const developedLand = totalLandCost/(area.ratio_area.sellArea);
 
-        const profitPerItems = product.user.products.map((item,index) =>   {
+        const profitPerItems = inputUser.map((item,index) =>   {
+            return JSON.parse(JSON.stringify({
+            type : item.type,
+            profitPerItem : item.cost - (((item.stairArea + item.area) * inputSpendings.costConstructionLivingSpace) + (allProductSize * developedLand) + inputSpendings.costOther),
+            noItem : item.quantity,
+            totalProfit: (item.cost - (((item.stairArea + item.area) * inputSpendings.costConstructionLivingSpace) + (allProductSize * developedLand) + inputSpendings.costOther)) * item.quantity
+        }))});
+        const profitPerItemsCom = inputCom.map((item,index) =>   {
             return JSON.parse(JSON.stringify({
             type : item.type,
             profitPerItem : item.cost - (((item.stairArea + item.area) * inputSpendings.costConstructionLivingSpace) + (allProductSize * developedLand) + inputSpendings.costOther),
@@ -288,13 +297,16 @@ class Townhouse{
             totalProfit: (item.cost - (((item.stairArea + item.area) * inputSpendings.costConstructionLivingSpace) + (allProductSize * developedLand) + inputSpendings.costOther)) * item.quantity
         }))});
         const projectProfit = profitPerItems.map(item => item.totalProfit).reduce(reducer);
+        const projectProfitCom = profitPerItemsCom.map(item => item.totalProfit).reduce(reducer);
         const netProfit = projectProfit - implicitCosts.costAdvtAndEmployee;
         const averageProfit = netProfit/product.user.totalQuantity;
         
         const profit = {
             profitPerItems : profitPerItems,
             totalProfit : projectProfit,
+            totalProfitCompetitor : projectProfitCom,
             netProfit : netProfit,
+            isCompetitor : property.product_input.isCompetitor,
             averageProfit : averageProfit
         };
 
