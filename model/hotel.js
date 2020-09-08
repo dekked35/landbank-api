@@ -131,7 +131,7 @@ class Hotel{
         const outdoorArea = (productInput.outdoors && productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         const availableOutdoorArea = area.percent.outdoor - outdoorArea;
 
-        const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom) : 0;
+        const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom).reduce(reducer) : 0;
         const availableResortArea = area.ratio_area.resort - totalResortArea;
         const resortHallway = totalResortArea * 0.15
         

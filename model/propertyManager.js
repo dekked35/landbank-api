@@ -18,7 +18,7 @@ class PropertyManager{
             this.property = new Condo();
         } else if (propertyType === "hotel"){
             this.property = new Hotel();
-        } else if (propertyType === "community mall"){
+        } else if (propertyType === "communityMall" || propertyType === "community mall"){
             this.property = new CommunityMall();
         } else {
             this.property = null;
