@@ -64,14 +64,17 @@ class Hotel{
 
         const outdoorArea = (productInput.outdoors && productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         const availableOutdoorArea = area.percent.outdoor - outdoorArea;
-        
         const totalOutdoorArea = outdoorArea + roadArea;
+
+        const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom).reduce(reducer) : 0;
+        const availableResortArea = area.ratio_area.resort - totalResortArea;
+        const resortHallway = totalResortArea * 0.15
         
-        const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
-        const totalCorridor = roomHallway + centralHallway;
-        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
+        const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
+        const totalCorridor = roomHallway + centralHallway + resortHallway;
+        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
         const totalRoomQuantity = (productInput.rooms && productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
-        const remainingArea = (area.availableArea * 4) - usedArea
+        const remainingArea = area.availableArea - usedArea
 
         const competitorProduct = {
             competitor : {
@@ -93,6 +96,11 @@ class Hotel{
                 outdoors : productInput.outdoors,
                 totalOutdoorArea : outdoorArea,
                 availableOutdoorArea : availableOutdoorArea,
+
+                resort : productInput.resort,
+                totalResortArea : totalResortArea,
+                availableResortArea : availableResortArea,
+                resortCorridor: resortHallway,
 
                 totalOutdoorArea : totalOutdoorArea,
                 availableArea : area.availableArea,

@@ -222,7 +222,7 @@ class CommunityMall{
 
         const totalConstructionCost = totalRoomCost + totalCentralCost + totalParkingCost + totalOutDoorCost;
 
-        const monthlyPaidItems = (input.costPerMonths.length > 0) ? input.costPerMonths.map(item => JSON.parse(JSON.stringify({
+        const monthlyPaidItems = (input.costPerMonth.length > 0) ? input.costPerMonth.map(item => JSON.parse(JSON.stringify({
             type : item.type,
             cost : item.cost,
             no : item.no,
