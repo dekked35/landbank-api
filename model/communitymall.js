@@ -190,15 +190,15 @@ class CommunityMall{
         }))) : [];
         const totalRoomCost = (newRooms.length > 0) ? newRooms.map(room => room.totalCost).reduce(reducer) : 0;
 
-        const newCentrals = (input.centrals.length > 0) ? input.centrals.map(facility => JSON.parse(JSON.stringify({
-            type  : facility.type,
-            name : facility.name,
-            area : facility.area,
-            noRoom : facility.noRoom,
-            cost : facility.cost,
-            totalCost : facility.area * facility.noRoom * facility.cost
-        }))) : [];
-        const totalCentralCost = (newCentrals.length > 0) ? newCentrals.map(facility => facility.totalCost).reduce(reducer) : 0;
+        // const newCentrals = (input.centrals.length > 0) ? input.centrals.map(facility => JSON.parse(JSON.stringify({
+        //     type  : facility.type,
+        //     name : facility.name,
+        //     area : facility.area,
+        //     noRoom : facility.noRoom,
+        //     cost : facility.cost,
+        //     totalCost : facility.area * facility.noRoom * facility.cost
+        // }))) : [];
+        // const totalCentralCost = (newCentrals.length > 0) ? newCentrals.map(facility => facility.totalCost).reduce(reducer) : 0;
 
         const newPark = (input.parking.length > 0) ? input.parking.map(lot => JSON.parse(JSON.stringify({
             type  : lot.type,
@@ -220,7 +220,7 @@ class CommunityMall{
         }))) : [];
         const totalOutDoorCost = (newOutdoors.length > 0) ? newOutdoors.map(garden => garden.totalCost).reduce(reducer) : 0;
 
-        const totalConstructionCost = totalRoomCost + totalCentralCost + totalParkingCost + totalOutDoorCost;
+        const totalConstructionCost = totalRoomCost /*+ totalCentralCost*/ + totalParkingCost + totalOutDoorCost;
 
         const monthlyPaidItems = (input.costPerMonth.length > 0) ? input.costPerMonth.map(item => JSON.parse(JSON.stringify({
             type : item.type,
@@ -250,10 +250,10 @@ class CommunityMall{
             roomCorridor : product.user.roomCorridor,
             totalRoomCost : totalRoomCost,
 
-            centrals : newCentrals,
-            totalCentralArea : product.user.totalCentralArea,
-            centralCorridor : product.user.centralCorridor,
-            totalCentralCost : totalCentralCost,
+            // centrals : newCentrals,
+            // totalCentralArea : product.user.totalCentralArea,
+            // centralCorridor : product.user.centralCorridor,
+            // totalCentralCost : totalCentralCost,
 
             parking : newPark,
             totalParkingArea : product.user.totalParkingArea,
