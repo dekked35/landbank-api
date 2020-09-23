@@ -73,7 +73,7 @@ class Hotel{
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
         const totalCorridor = roomHallway + centralHallway + resortHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
-        const totalRoomQuantity = (productInput.rooms && productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
+        const totalRoomQuantity = productInput.rooms.length > 0 ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = area.availableArea - usedArea
 
         const competitorProduct = {

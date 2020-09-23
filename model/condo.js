@@ -13,7 +13,8 @@ class Condo{
             central: (input.percent.central/100) * availableArea,
             corridor: (input.percent.corridor/100) * availableArea,
             parking: (input.percent.parking/100) * availableArea,
-            outdoor: (input.percent.outdoor/100) * availableArea
+            outdoor: (input.percent.outdoor/100) * availableArea,
+            resort: (input.percent.resort/100) * availableArea
         }));
 
         const costLand = (input.costLand > 0) ? input.costLand : input.deposit + (input.rentNoYear * 12 * input.rentPerMonth);
@@ -62,12 +63,15 @@ class Condo{
 
         const outdoorArea = (productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         const availableOutdoorArea = area.percent.outdoor - outdoorArea;
-        
         const totalOutdoorArea = outdoorArea + roadArea;
+
+        const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom).reduce(reducer) : 0;
+        const availableResortArea = area.ratio_area.resort - totalResortArea;
+        const resortHallway = totalResortArea * 0.15
         
-        const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
+        const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
         const totalCorridor = roomHallway + centralHallway;
-        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
+        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
         const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = (area.availableArea * 4) - usedArea
 
@@ -91,6 +95,11 @@ class Condo{
                 outdoors : productInput.outdoors,
                 totalOutdoorArea : outdoorArea,
                 availableOutdoorArea : availableOutdoorArea,
+
+                resort : productInput.resort,
+                totalResortArea : totalResortArea,
+                availableResortArea : availableResortArea,
+                resortCorridor: resortHallway,
 
                 totalOutdoorArea : totalOutdoorArea,
                 availableArea : area.availableArea,
@@ -128,12 +137,15 @@ class Condo{
 
         const outdoorArea = (productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         const availableOutdoorArea = area.percent.outdoor - outdoorArea;
-        
         const totalOutdoorArea = outdoorArea + roadArea;
+
+        const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom).reduce(reducer) : 0;
+        const availableResortArea = area.ratio_area.resort - totalResortArea;
+        const resortHallway = totalResortArea * 0.15
         
-        const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
-        const totalCorridor = roomHallway + centralHallway;
-        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
+        const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
+        const totalCorridor = roomHallway + centralHallway + resortHallway;
+        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
         const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = area.availableArea - usedArea
 
@@ -157,6 +169,11 @@ class Condo{
                 outdoors : productInput.outdoors,
                 totalOutdoorArea : outdoorArea,
                 availableOutdoorArea : availableOutdoorArea,
+
+                resort : productInput.resort,
+                totalResortArea : totalResortArea,
+                availableResortArea : availableResortArea,
+                resortCorridor: resortHallway,
 
                 availableArea : area.availableArea,
                 usedArea : usedArea,
