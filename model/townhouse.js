@@ -19,9 +19,9 @@ class Townhouse{
     area(property){
         const areaInput = property.area_input;
 
-        const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4)/(22/7))) * 2);
+        const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4/(22/7)))) * 2);
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : (areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea,
+            sellArea : ((areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea) - areaInput.coverArea,
             roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
             greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea,
             centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea
@@ -111,7 +111,7 @@ class Townhouse{
         const productInput = property.product_input.competitor.products;
         const input = property.product_input.user;
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
-        const stair1 = input.width * input.depth / 12
+        const stair1 = input.width * input.depth / 12;
         
         const centralArea = input.depth * input.width;
         const frontArea = input.width * input.frontDepth;
@@ -162,6 +162,8 @@ class Townhouse{
         const areaInput = property.area_input
         const userProduct = product.user.products;
         const allProductSize = product.user.totalAreaSquare;
+        const centerAreaInput = areaInput.standardArea.centerArea;
+
         const roadDevelopmentCost = area.ratio_area.roadSize * 1250 *4;
         const roadCoverCost = (area.totalArea/400) * 200000;
         const waterPipelineCost = area.totalArea * 76;
@@ -169,9 +171,8 @@ class Townhouse{
         const electricityCost = area.totalArea * 250;
         const guardHouseAndFenceCost = area.fenceLength * 3000;
         const greenAreaDevelopment = (area.ratio_area.greenArea) * 3000 * 4;
-        let centerArea = areaInput.standardArea.centerArea
-        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item] * 1.25)
-        const centerPrice = centerArea.reduce(reducer)
+        const centerArea = Object.keys(centerAreaInput).map(item => centerAreaInput[item] * centerCost[item] * 1.25);
+        const centerPrice = centerArea.reduce(reducer);
         const duration = util.duration(input.periodSellStart, input.periodSellEnd);
         const salaryEmployee = duration * input.salaryEmployee;
         const costAdvtOnePer = product.user.totalCost * input.percentCostAdvt / 100;
@@ -235,7 +236,7 @@ class Townhouse{
         const area = this.area(property);
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
-        const productInput = property.product_input.user.products
+        // const productInput = property.product_input.user.products
 
         const costLand = spendings.costInProject / area.ratio_area.sellArea;
         const costAdvtAndEmployee = spendings.costAdvtOnePer + spendings.salaryEmployee;
@@ -265,9 +266,11 @@ class Townhouse{
         const inputUser = property.product_input.user.products;
         const inputCom = property.product_input.competitor.products;
         const inputSpendings = property.spendings_input;
-        const areaInput = property.area_input
+        // const centerAreaInput = areaInput.standardArea.centerArea;
+        // const areaInput = property.area_input
         const allProductSize = product.user.totalAreaSquare;
         const area = this.area(property);
+
         const roadDevelopmentCost = area.ratio_area.roadSize * 1250 *4;
         const roadCoverCost = (area.totalArea/400) * 200000;
         const waterPipelineCost = area.totalArea * 76;
@@ -275,9 +278,8 @@ class Townhouse{
         const electricityCost = area.totalArea * 250;
         const guardHouseAndFenceCost = area.fenceLength * 3000;
         const greenAreaDevelopment = (area.ratio_area.greenArea) * 3000 * 4;
-        let centerArea = areaInput.standardArea.centerArea
-        centerArea = Object.keys(centerArea).map( item => centerArea[item] * centerCost[item])
-        const centerPrice = centerArea.reduce(reducer)
+        // const centerPrice = centerArea.reduce(reducer)
+        // const centerArea = Object.keys(centerAreaInput).map(item => centerAreaInput[item] * centerCost[item] * 1.25);
         const landDevelopmentCost = roadDevelopmentCost + roadCoverCost + waterPipelineCost + waterTreatmentCost + electricityCost + guardHouseAndFenceCost + greenAreaDevelopment /*+ centerPrice*/ + spendings.costPlan;
         const totalLandCost = landDevelopmentCost + spendings.priceLandBought;
         const developedLand = totalLandCost/(area.ratio_area.sellArea);
@@ -316,70 +318,41 @@ class Townhouse{
     ipr(property){
         const input = property.ipr_input;
         const spendings = this.spendings(property);
-        const productInput = property.product_input.competitor.products;
+        const profit = this.profit(property);
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
         const totalHouseQty = spendings.costConstructionPerItem.map( item => item.quantity ).reduce(reducer);
-        const avgCompetitorProdCost = productInput.map(product => product.cost).reduce(reducer);
 
         const investmentBudget = spendings.costConstructionPerItem.map( item => item.total ).reduce(reducer);
-        const incomePerMonth = totalHouseQty/4/12 * (avgCompetitorProdCost/3);
+        const incomePerMonth = totalHouseQty/4/12 * profit.totalProfit;
         const expensePerMonth = totalHouseQty/4/12 * investmentBudget;
- 
-        const bankExpensePerMonth = expensePerMonth - ((input.bankInterest/12) * (input.bankLoad * investmentBudget));
 
-        const breakEvenPointMonthlyWithCash = investmentBudget/(incomePerMonth - expensePerMonth);
+        const breakEvenPointMonthlyWithCash = investmentBudget/incomePerMonth;
         const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
-        const breakEvenPointYearWithBank = incomePerMonth/12;
+        const breakEvenPointMonthlyWithBank = investmentBudget/incomePerMonth;
+        const breakEvenPointYearWithBank = breakEvenPointMonthlyWithBank/12;
 
-        const investmentValue = investmentBudget;
-        const investmentValueRatio = input.ratioInvestmentValue;
-        const borrowFund = investmentValue * (input.bankLoad/100);
-        const borrowFundRatio = input.bankLoad;
-        const borrowFundInterest = input.bankInterest;
-        const privateFund = investmentValue * (input.privateCash/100);
-        const privateFundRatio = input.privateCash;
-        const privateFundInterest = input.returnRate;
+        const overBorrowFund = spendings.priceLandBought * totalHouseQty;
+        const loanInterest = (input.bankInterest/12) * overBorrowFund;
 
-        const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
-        const incomePerYear = incomePerMonth * 12;
-        const cashflow = Array(input.cashFlowYear).fill(incomePerYear * input.cashFlowYear);
+        const firstMonthCashflow = overBorrowFund + loanInterest;
+        const monthlyCashflow = incomePerMonth + expensePerMonth + loanInterest;
+
+        const cashflowYear = (breakEvenPointMonthlyWithCash + 12)/12;
+        const cashflow = Array(cashflowYear).fill(monthlyCashflow).splice(0, 1, firstMonthCashflow);
+
+        const bankInvestmentFund = input.bankInvestmentFundRatio * investmentBudget;
+        const privateInvestmentFund = input.privateInvestmentFundRation * investmentBudget;
+        const wacc = (privateInvestmentFund * 0.126) + (bankInvestmentFund * 0.064);
         const npv = finance.NPV(wacc,-investmentBudget,...cashflow);
         const irr = finance.IRR(-investmentBudget,...cashflow);
 
         const IPR = {
             ipr: {
-                investmentBudget: investmentBudget,
-                incomePerMonth: incomePerMonth,
-                expensePerMonth: expensePerMonth,
-                bankIncomePerMonth: incomePerMonth,
-                bankExpensePerMonth: bankExpensePerMonth,
-                breakEvenPointMonthCash: breakEvenPointMonthlyWithCash,
-                breakEvenPointYearCash: breakEvenPointYearWithCash,
-                bankLoad: input.bankLoad,
-                privateCash: input.privateCash,
-                bankInterest: input.bankInterest,
-                returnRate: input.returnRate,
-                breakEvenPointMonthBank: breakEvenPointMonthlyWithCash,
-                breakEvenPointYearBank: breakEvenPointYearWithBank,
-                cashFlowYear: input.cashFlowYear,
-                npvValue: npv,
-                irrValue: irr, 
-                financeCosts: wacc,
-                paybackPeriod: breakEvenPointMonthlyWithCash,
-                investmentValue: investmentBudget,
-                ratioInvestmentValue: investmentValueRatio,
-                privateFund: privateFund,
-                ratioPrivateFund: privateFundRatio,
-                interestPrivateFund: privateFundInterest,
-                borrowFund: borrowFund,
-                ratioBorrowFund: borrowFundRatio,
-                interestBorrowFund: borrowFundInterest,
-                borrowPeriod: input.borrowPeriod
+                
             }
         }
-
         return IPR;
     }
 }

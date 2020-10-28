@@ -1,5 +1,7 @@
 const Finance = require('financejs');
+const Util = require('../util/util');
 const finance = new Finance();
+const util = new Util();
 
 class Condo{
     constructor(){}
@@ -9,12 +11,12 @@ class Condo{
         const availableArea = input.availableArea;
 
         const newRatio = JSON.parse(JSON.stringify({
-            room: (input.percent.room/100) * availableArea,
+            room: ((input.percent.room/100) * availableArea) - input.coverArea,
             central: (input.percent.central/100) * availableArea,
             corridor: (input.percent.corridor/100) * availableArea,
             parking: (input.percent.parking/100) * availableArea,
             outdoor: (input.percent.outdoor/100) * availableArea,
-            resort: (input.percent.resort/100) * availableArea
+            resort: ((input.percent.resort/100) * availableArea) - input.coverArea
         }));
 
         const costLand = (input.costLand > 0) ? input.costLand : input.deposit + (input.rentNoYear * 12 * input.rentPerMonth);
@@ -55,7 +57,7 @@ class Condo{
 
         const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
         const availableCentralArea = area.ratio_area.central - totalCentralArea ;
-        const centralHallway = totalCentralArea * 0.20
+        const centralHallway = totalCentralArea * 0.20;
 
         const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
@@ -67,13 +69,16 @@ class Condo{
 
         const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom).reduce(reducer) : 0;
         const availableResortArea = area.ratio_area.resort - totalResortArea;
-        const resortHallway = totalResortArea * 0.15
+        const resortHallway = totalResortArea * 0.15;
         
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
         const totalCorridor = roomHallway + centralHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
-        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
-        const remainingArea = (area.availableArea * 4) - usedArea
+        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
+        const remainingArea = (area.availableArea * 4) - usedArea;
+
+        const parkingLotQuantity = util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, productInput.province);
+        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
 
         const competitorProduct = {
             competitor : {
@@ -110,6 +115,8 @@ class Condo{
                 indoorArea : totalIndoorArea,
                 totalOutdoor : totalOutdoorArea,
                 totalRoomQuantity : totalRoomQuantity,
+                parkingLotQuantity : parkingLotQuantity,
+                parkingLotPercentage : parkingLotPercentage,
                 remainingArea : remainingArea
             }
         };
@@ -129,7 +136,7 @@ class Condo{
 
         const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
         const availableCentralArea = area.ratio_area.central - totalCentralArea ;
-        const centralHallway = totalCentralArea * 0.20
+        const centralHallway = totalCentralArea * 0.20;
 
         const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
@@ -141,13 +148,16 @@ class Condo{
 
         const totalResortArea = (productInput.resort && productInput.resort.length > 0) ? productInput.resort.map(resort => resort.area * resort.noRoom).reduce(reducer) : 0;
         const availableResortArea = area.ratio_area.resort - totalResortArea;
-        const resortHallway = totalResortArea * 0.15
+        const resortHallway = totalResortArea * 0.15;
         
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
         const totalCorridor = roomHallway + centralHallway + resortHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
         const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
-        const remainingArea = area.availableArea - usedArea
+        const remainingArea = area.availableArea - usedArea;
+
+        const parkingLotQuantity = util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer);
+        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
 
         const userProduct = {
             user : {
@@ -183,6 +193,8 @@ class Condo{
                 indoorArea : totalIndoorArea,
                 totalOutdoor : totalOutdoorArea,
                 totalRoomQuantity : totalRoomQuantity,
+                parkingLotQuantity : parkingLotQuantity,
+                parkingLotPercentage : parkingLotPercentage,
                 remainingArea : remainingArea
             }
         };
@@ -339,61 +351,43 @@ class Condo{
     }
 
     ipr(property){
+        const input = property.ipr_input;
         const area = this.area(property);
         const spendings = this.spendings(property);
         const implicitCosts = this.implicitCosts(property);
-        const input = property.ipr_input;
 
-        const investmentBudget = area.costLand + spendings.totalCostPerMonthAndPreOpening + spendings.costConstruction;
-        const netProfitPerMonth = implicitCosts.totalIncomePerMonth - spendings.totalCostPerMonth;
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+        const totalRoomQty = spendings.rooms.map(room => room.noRoom).reduce(reducer);
+
+        const investmentBudget = area.costLand + spendings.costSpecielEquipmentAndPreOpening + spendings.costConstruction;
+        const netProfitPerMonth = totalRoomQty/4/12 * implicitCosts.estimatedIncomePerMonth;
+        const expensePerMonth = totalRoomQty/4/12 * investmentBudget;
+
         const breakEvenPointMonthlyWithCash = investmentBudget/netProfitPerMonth;
         const breakEvenPointYearWithCash = breakEvenPointMonthlyWithCash/12;
-        const breakEvenPointMonthlyWithBank = investmentBudget/(netProfitPerMonth - (input.borrowFund * input.bankInterest/12));
+        const breakEvenPointMonthlyWithBank = investmentBudget/netProfitPerMonth;
         const breakEvenPointYearWithBank = breakEvenPointMonthlyWithBank/12;
         
-        const investmentValue = investmentBudget;
-        const investmentValueRatio = input.ratioInvestmentValue;
-        const borrowFund = investmentValue * (input.bankLoad/100);
-        const borrowFundRatio = input.bankLoad;
-        const borrowFundInterest = input.bankInterest;
-        const privateFund = investmentValue * (input.privateCash/100);
-        const privateFundRatio = input.privateCash;
-        const privateFundInterest = input.returnRate;
+        const overBorrowFund = area.costLand * totalRoomQty;
+        const loanInterest = (input.bankInterest/12) * overBorrowFund;
 
-        const wacc = (privateFundRatio + privateFundInterest) * (borrowFundRatio * borrowFundInterest);
-        const netProfitPerYear = netProfitPerMonth * 12;
-        const cashflow = Array(input.cashFlowYear).fill(netProfitPerYear * input.cashFlowYear);
+        const firstMonthCashflow = overBorrowFund + loanInterest;
+        const monthlyCashflow = netProfitPerMonth + expensePerMonth + loanInterest;
+
+        const cashflowYear = (breakEvenPointMonthlyWithCash + 12)/12;
+        const cashflow = Array(cashflowYear).fill(monthlyCashflow).splice(0, 1, firstMonthCashflow);
+
+        const bankInvestmentFund = input.bankInvestmentFundRatio * investmentBudget;
+        const privateInvestmentFund = input.privateInvestmentFundRation * investmentBudget;
+        const wacc = (privateInvestmentFund * 0.126) + (bankInvestmentFund * 0.064);
         const npv = finance.NPV(wacc,-investmentBudget,...cashflow);
         const irr = finance.IRR(-investmentBudget,...cashflow);
         const IPR = {
             ipr: {
-                investmentBudget: investmentBudget,
-                incomePerMonth: netProfitPerMonth,
-                breakEvenPointMonthCash: breakEvenPointMonthlyWithCash,
-                breakEvenPointYearCash: breakEvenPointYearWithCash,
-                bankLoad: input.bankLoad,
-                privateCash: input.privateCash,
-                bankInterest: input.bankInterest,
-                returnRate: input.returnRate,
-                breakEvenPointMonthBank: breakEvenPointMonthlyWithBank,
-                breakEvenPointYearBank: breakEvenPointYearWithBank,
-                cashFlowYear: input.cashFlowYear,
-                npvValue: npv,
-                irrValue: irr, 
-                financeCosts: wacc,
-                paybackPeriod: breakEvenPointMonthlyWithCash,
-                investmentValue: investmentBudget,
-                ratioInvestmentValue: investmentValueRatio,
-                privateFund: privateFund,
-                ratioPrivateFund: privateFundRatio,
-                interestPrivateFund: privateFundInterest,
-                borrowFund: borrowFund,
-                ratioBorrowFund: borrowFundRatio,
-                interestBorrowFund: borrowFundInterest,
-                borrowPeriod: input.borrowPeriod
+                
             }
         }
-
         return IPR;
     }
 }
