@@ -12,7 +12,7 @@ class CommunityMall{
 
         const newRatio = JSON.parse(JSON.stringify({
             room: ((input.percent.room/100) * availableArea) - input.coverArea,
-            // central: (input.percent.central/100) * availableArea,
+            central: (input.percent.central/100) * availableArea,
             corridor: (input.percent.corridor/100) * availableArea,
             parking: (input.percent.parking/100) * availableArea,
             outdoor: (input.percent.outdoor/100) * availableArea
@@ -54,9 +54,15 @@ class CommunityMall{
         const availableRoomArea = area.ratio_area.room - totalAllRoomArea;
         const roomHallway = totalAllRoomArea * 0.15;
 
-        // const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
-        // const availableCentralArea = area.ratio_area.central - totalCentralArea ;
-        // const centralHallway = totalCentralArea * 0.20;
+        const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
+        const availableCentralArea = area.ratio_area.central - totalCentralArea ;
+        const centralHallway = totalCentralArea * 0.20;
+
+        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
+        const totalParkingLotQuantity = Math.floor(util.parkingLot(totalRoomQuantity));
+        if(productInput.parking.length > 0) {
+            productInput.parking[0].noRoom = totalParkingLotQuantity
+        }
 
         const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
@@ -67,13 +73,10 @@ class CommunityMall{
         
         const totalOutdoorArea = outdoorArea + roadArea;
         
-        const usedArea = totalAllRoomArea + roomHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
-        const totalCorridor = roomHallway;
-        const totalIndoorArea = totalAllRoomArea + roomHallway;
-        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
+        const usedArea = totalAllRoomArea + roomHallway + totalParkingLotArea + totalCentralArea + centralHallway + roadArea + totalOutdoorArea;
+        const totalCorridor = roomHallway + centralHallway;
+        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
         const remainingArea = (area.availableArea * 4) - usedArea;
-
-        const totalParkingLotQuantity = util.parkingLot(totalRoomQuantity);
 
         const competitorProduct = {
             competitor : {
@@ -82,10 +85,10 @@ class CommunityMall{
                 availableRoomArea : availableRoomArea,
                 roomCorridor : roomHallway,
 
-                // centrals : productInput.centrals,
-                // totalCentralArea : totalCentralArea,
-                // availableCentralArea : availableCentralArea,
-                // centralCorridor : centralHallway,
+                centrals : productInput.centrals,
+                totalCentralArea : totalCentralArea,
+                availableCentralArea : availableCentralArea,
+                centralCorridor : centralHallway,
 
                 parking : productInput.parking,
                 totalParkingArea : totalParkingLotArea,
@@ -99,11 +102,11 @@ class CommunityMall{
                 totalOutdoorArea : totalOutdoorArea,
                 availableArea : area.availableArea,
                 usedArea : usedArea,
-                totalRoomArea : totalAllRoomArea,
+                // totalRoomArea : totalAllRoomArea,
                 // totalCentralArea : totalCentralArea,
                 totalCorridor : totalCorridor,
                 indoorArea : totalIndoorArea,
-                totalOutdoor : totalOutdoorArea,
+                // totalOutdoor : totalOutdoorArea,
                 totalRoomQuantity : totalRoomQuantity,
                 totalParkingLotQuantity: totalParkingLotQuantity,
                 remainingArea : remainingArea
@@ -123,9 +126,15 @@ class CommunityMall{
         const availableRoomArea = area.ratio_area.room - totalAllRoomArea;
         const roomHallway = totalAllRoomArea * 0.15;
 
-        // const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
-        // const availableCentralArea = area.ratio_area.central - totalCentralArea ;
-        // const centralHallway = totalCentralArea * 0.20;
+        const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
+        const availableCentralArea = area.ratio_area.central - totalCentralArea ;
+        const centralHallway = totalCentralArea * 0.20;
+
+        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
+        const totalParkingLotQuantity = Math.floor(util.parkingLot(totalRoomQuantity));
+        if(productInput.parking.length > 0) {
+            productInput.parking[0].noRoom = totalParkingLotQuantity
+        }
 
         const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
@@ -136,13 +145,10 @@ class CommunityMall{
         
         const totalOutdoorArea = outdoorArea + roadArea;
         
-        const usedArea = totalAllRoomArea + roomHallway + totalParkingLotArea + roadArea + totalOutdoorArea;
-        const totalCorridor = roomHallway;
-        const totalIndoorArea = totalAllRoomArea + roomHallway;
-        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
+        const usedArea = totalAllRoomArea + roomHallway + totalParkingLotArea + totalCentralArea + centralHallway + roadArea + totalOutdoorArea;
+        const totalCorridor = roomHallway + centralHallway;
+        const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway;
         const remainingArea = area.availableArea - usedArea;
-
-        const totalParkingLotQuantity = util.parkingLot(totalRoomQuantity);
 
         const userProduct = {
             user : {
@@ -151,10 +157,10 @@ class CommunityMall{
                 availableRoomArea : availableRoomArea,
                 roomCorridor : roomHallway,
 
-                // centrals : productInput.centrals,
-                // totalCentralArea : totalCentralArea,
-                // availableCentralArea : availableCentralArea,
-                // centralCorridor : centralHallway,
+                centrals : productInput.centrals,
+                totalCentralArea : totalCentralArea,
+                availableCentralArea : availableCentralArea,
+                centralCorridor : centralHallway,
 
                 parking : productInput.parking,
                 totalParkingArea : totalParkingLotArea,
@@ -167,11 +173,11 @@ class CommunityMall{
 
                 availableArea : area.availableArea,
                 usedArea : usedArea,
-                totalRoomArea : totalAllRoomArea,
+                // totalRoomArea : totalAllRoomArea,
                 // totalCentralArea : totalCentralArea,
                 totalCorridor : totalCorridor,
                 indoorArea : totalIndoorArea,
-                totalOutdoor : totalOutdoorArea,
+                // totalOutdoor : totalOutdoorArea,
                 totalRoomQuantity : totalRoomQuantity,
                 totalParkingLotQuantity: totalParkingLotQuantity,
                 remainingArea : remainingArea
@@ -185,6 +191,7 @@ class CommunityMall{
         const area = this.area(property);
         const product = this.userProduct(property);
         const input = property.spendings_input;
+        let preOpeningPrice = 0
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
@@ -198,15 +205,15 @@ class CommunityMall{
         }))) : [];
         const totalRoomCost = (newRooms.length > 0) ? newRooms.map(room => room.totalCost).reduce(reducer) : 0;
 
-        // const newCentrals = (input.centrals.length > 0) ? input.centrals.map(facility => JSON.parse(JSON.stringify({
-        //     type  : facility.type,
-        //     name : facility.name,
-        //     area : facility.area,
-        //     noRoom : facility.noRoom,
-        //     cost : facility.cost,
-        //     totalCost : facility.area * facility.noRoom * facility.cost
-        // }))) : [];
-        // const totalCentralCost = (newCentrals.length > 0) ? newCentrals.map(facility => facility.totalCost).reduce(reducer) : 0;
+        const newCentrals = (input.centrals.length > 0) ? input.centrals.map(facility => JSON.parse(JSON.stringify({
+            type  : facility.type,
+            name : facility.name,
+            area : facility.area,
+            noRoom : facility.noRoom,
+            cost : facility.cost,
+            totalCost : facility.area * facility.noRoom * facility.cost
+        }))) : [];
+        const totalCentralCost = (newCentrals.length > 0) ? newCentrals.map(facility => facility.totalCost).reduce(reducer) : 0;
 
         const newPark = (input.parking.length > 0) ? input.parking.map(lot => JSON.parse(JSON.stringify({
             type  : lot.type,
@@ -228,21 +235,25 @@ class CommunityMall{
         }))) : [];
         const totalOutDoorCost = (newOutdoors.length > 0) ? newOutdoors.map(garden => garden.totalCost).reduce(reducer) : 0;
 
-        const totalConstructionCost = totalRoomCost /*+ totalCentralCost*/ + totalParkingCost + totalOutDoorCost;
+        const totalConstructionCost = totalRoomCost + totalCentralCost + totalParkingCost + totalOutDoorCost;
 
-        const monthlyPaidItems = (input.costPerMonth.length > 0) ? input.costPerMonth.map(item => JSON.parse(JSON.stringify({
-            type : item.type,
-            cost : item.cost,
-            no : item.no,
-            total : item.cost * item.no
-        }))) : [];
+        const monthlyPaidItems = (input.costPerMonth && input.costPerMonth.length > 0) ? input.costPerMonth.map(item => {
+            if(item.type === 'ค่าการตลาด' || item.type === 'พนักงานทำความสะอาด'){
+                preOpeningPrice += item.cost
+            }
+            return JSON.parse(JSON.stringify({
+                type : item.type,
+                cost : item.cost,
+                no : item.no,
+                total : item.cost * item.no})
+            )}) : [];
         const monthlyItemsCost = (monthlyPaidItems.length > 0) ? monthlyPaidItems.map(item => item.total).reduce(reducer) : 0;
 
         const equipments = (input.specialEquipments.length > 0) ? input.specialEquipments.map(item => JSON.parse(JSON.stringify({
             type : item.type,
-            cost : item.cost,
+            cost : item.type === 'ค่า Pre-Opening' ? preOpeningPrice :item.cost,
             no : item.no,
-            total : item.cost * item.no
+            total : item.type === 'ค่า Pre-Opening' ? preOpeningPrice * item.no : item.cost * item.no
         }))) : [];
         const equipmentsCost = (equipments.length > 0) ? equipments.map(item => item.total).reduce(reducer) : 0;
         
@@ -258,10 +269,10 @@ class CommunityMall{
             roomCorridor : product.user.roomCorridor,
             totalRoomCost : totalRoomCost,
 
-            // centrals : newCentrals,
-            // totalCentralArea : product.user.totalCentralArea,
-            // centralCorridor : product.user.centralCorridor,
-            // totalCentralCost : totalCentralCost,
+            centrals : newCentrals,
+            totalCentralArea : product.user.totalCentralArea,
+            centralCorridor : product.user.centralCorridor,
+            totalCentralCost : totalCentralCost,
 
             parking : newPark,
             totalParkingArea : product.user.totalParkingArea,

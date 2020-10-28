@@ -59,6 +59,13 @@ class Condo{
         const availableCentralArea = area.ratio_area.central - totalCentralArea ;
         const centralHallway = totalCentralArea * 0.20;
 
+        const parkingLotQuantity = Math.floor(util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, productInput.province));
+        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
+
+        if(productInput.parking.length > 0) {
+            productInput.parking[0].noRoom = parkingLotQuantity
+        }
+        
         const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
         const roadArea = totalParkingLotArea * 0.4;
@@ -77,8 +84,6 @@ class Condo{
         const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = (area.availableArea * 4) - usedArea;
 
-        const parkingLotQuantity = util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, productInput.province);
-        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
 
         const competitorProduct = {
             competitor : {
@@ -138,6 +143,12 @@ class Condo{
         const availableCentralArea = area.ratio_area.central - totalCentralArea ;
         const centralHallway = totalCentralArea * 0.20;
 
+        const parkingLotQuantity = Math.floor(util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, productInput.province));
+        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
+
+        if(productInput.parking.length > 0) {
+            productInput.parking[0].noRoom = parkingLotQuantity
+        }
         const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
         const roadArea = totalParkingLotArea * 0.4;
@@ -155,9 +166,6 @@ class Condo{
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
         const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = area.availableArea - usedArea;
-
-        const parkingLotQuantity = util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer);
-        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
 
         const userProduct = {
             user : {
@@ -206,6 +214,7 @@ class Condo{
         const area = this.area(property);
         const product = this.userProduct(property);
         const input = property.spendings_input;
+        let preOpeningPrice = 0
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
@@ -251,19 +260,23 @@ class Condo{
 
         const totalConstructionCost = totalRoomCost + totalCentralCost + totalParkingCost + totalOutDoorCost;
 
-        const monthlyPaidItems = (input.costPerMonth.length > 0) ? input.costPerMonth.map(item => JSON.parse(JSON.stringify({
-            type : item.type,
-            cost : item.cost,
-            no : item.no,
-            total : item.cost * item.no
-        }))) : [];
+        const monthlyPaidItems = (input.costPerMonth && input.costPerMonth.length > 0) ? input.costPerMonth.map(item => {
+            if(item.type === 'ค่าการตลาด' || item.type === 'พนักงานทำความสะอาด'){
+                preOpeningPrice += item.cost
+            }
+            return JSON.parse(JSON.stringify({
+                type : item.type,
+                cost : item.cost,
+                no : item.no,
+                total : item.cost * item.no})
+            )}) : [];
         const monthlyItemsCost = (monthlyPaidItems.length > 0) ? monthlyPaidItems.map(item => item.total).reduce(reducer) : 0;
 
         const equipments = (input.specialEquipments.length > 0) ? input.specialEquipments.map(item => JSON.parse(JSON.stringify({
             type : item.type,
-            cost : item.cost,
+            cost : item.type === 'ค่า Pre-Opening' ? preOpeningPrice :item.cost,
             no : item.no,
-            total : item.cost * item.no
+            total : item.type === 'ค่า Pre-Opening' ? preOpeningPrice * item.no : item.cost * item.no
         }))) : [];
         const equipmentsCost = (equipments.length > 0) ? equipments.map(item => item.total).reduce(reducer) : 0;
         
