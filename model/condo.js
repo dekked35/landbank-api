@@ -11,12 +11,13 @@ class Condo{
         const availableArea = input.availableArea;
 
         const newRatio = JSON.parse(JSON.stringify({
-            room: ((input.percent.room/100) * availableArea) - input.coverArea,
+            room: ((input.percent.room/100) * availableArea) - (input.standardArea.area.coverArea ? 0 : input.coverArea),
             central: (input.percent.central/100) * availableArea,
             corridor: (input.percent.corridor/100) * availableArea,
             parking: (input.percent.parking/100) * availableArea,
             outdoor: (input.percent.outdoor/100) * availableArea,
-            resort: ((input.percent.resort/100) * availableArea) - input.coverArea
+            resort: ((input.percent.resort/100) * availableArea),
+            coverArea: input.coverArea
         }));
 
         const costLand = (input.costLand > 0) ? input.costLand : input.deposit + (input.rentNoYear * 12 * input.rentPerMonth);
@@ -46,7 +47,7 @@ class Condo{
     }
 
     competitorProduct(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const productInput = property.product_input.competitor;
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -130,7 +131,7 @@ class Condo{
     }
 
     userProduct(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const productInput = property.product_input.user;
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -211,7 +212,7 @@ class Condo{
     }
 
     spendings(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const product = this.userProduct(property);
         const input = property.spendings_input;
         let preOpeningPrice = 0
@@ -323,7 +324,7 @@ class Condo{
     }
 
     implicitCosts(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
 
@@ -365,7 +366,7 @@ class Condo{
 
     ipr(property){
         const input = property.ipr_input;
-        const area = this.area(property);
+        const area = property.area_input;
         const spendings = this.spendings(property);
         const implicitCosts = this.implicitCosts(property);
 

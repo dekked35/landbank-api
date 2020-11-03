@@ -17,10 +17,11 @@ class Village {
 
         const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4/(22/7)))) * 2);
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : ((areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea) - areaInput.coverArea,
+            sellArea : ((areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea) - (areaInput.standardArea.area.coverArea ? 0 : areaInput.coverArea),
             roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
             greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea,
-            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea
+            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea,
+            coverArea : areaInput.coverArea
         }));
 
         const total_land_price = areaInput.land_price * areaInput.totalArea;
@@ -55,7 +56,7 @@ class Village {
     }
 
     competitorProduct(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const productInput = property.product_input.competitor.products;
         const areaSellArea = property.product_input.competitor.usedArea ? parseFloat(property.product_input.competitor.usedArea) : area.ratio_area.sellArea 
         const oneFloorQty = parseInt(((productInput[0].ratio/100) * areaSellArea)/(productInput[0].size));
@@ -104,7 +105,7 @@ class Village {
     }
 
     userProduct(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const productInput = property.product_input.user.products;
         const oneFloorQty = parseInt(((productInput[0].ratio/100) * area.ratio_area.sellArea)/(productInput[0].size ));
         const twoFloorQty = parseInt(((productInput[1].ratio/100) * area.ratio_area.sellArea)/(productInput[1].size));
@@ -151,7 +152,7 @@ class Village {
     }
 
     spendings(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const product = this.userProduct(property);
         const spendingsInput = property.spendings_input;
         const areaInput = property.area_input
@@ -238,7 +239,7 @@ class Village {
     }
 
     implicitCosts(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
 

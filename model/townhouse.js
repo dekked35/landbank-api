@@ -21,10 +21,11 @@ class Townhouse{
 
         const fenceLength = (3.14 * ((Math.sqrt(areaInput.availableArea * 4/(22/7)))) * 2);
         const ratio_area = JSON.parse(JSON.stringify({
-            sellArea : ((areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea) - areaInput.coverArea,
+            sellArea : ((areaInput.standardArea.percent.sellArea/100) * areaInput.availableArea) - (areaInput.standardArea.area.coverArea ? 0 : areaInput.coverArea),
             roadSize : (areaInput.standardArea.percent.roadSize/100) * areaInput.availableArea,
             greenArea : (areaInput.standardArea.percent.greenArea/100) * areaInput.availableArea,
-            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea
+            centerArea : (areaInput.standardArea.percent.centerArea/100) * areaInput.availableArea,
+            coverArea : areaInput.coverArea
         }));
 
         const total_land_price = areaInput.land_price * areaInput.totalArea;
@@ -60,7 +61,7 @@ class Townhouse{
     }
 
     userProduct(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const productInput = property.product_input.user.products;
         const input = property.product_input.user;
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -74,9 +75,7 @@ class Townhouse{
         
         const newProducts = productInput.map((product,index) => JSON.parse(JSON.stringify({
             type : product.type,
-            // area : product.area,
             area : (level[index] * (input.width * input.depth - stair1)) + frontArea + behindArea,
-            // stairArea : 2.2 * (input.depth * 0.5),
             stairArea : stair1 * level[index],
             cost : product.cost,
             ratio : product.ratio,
@@ -107,7 +106,7 @@ class Townhouse{
     }
 
     competitorProduct(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const productInput = property.product_input.competitor.products;
         const input = property.product_input.user;
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -155,7 +154,7 @@ class Townhouse{
     }
 
     spendings(property){
-        const area = this.area(property);
+        const area = property.area_input;
         const product = this.userProduct(property);
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
         const input = property.spendings_input;
@@ -233,7 +232,7 @@ class Townhouse{
         // const totalCost = spendings.costDevelopLand + landCost;
         // const costAdvtAndEmployee = (spendings.salaryEmployee + spendings.costAdvtOnePer) * spendings.sellPeriod;
         // const projectCost = product.user.totalCost;
-        const area = this.area(property);
+        const area = property.area_input;
         const product = this.userProduct(property);
         const spendings = this.spendings(property);
         // const productInput = property.product_input.user.products
