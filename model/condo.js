@@ -52,26 +52,26 @@ class Condo{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const totalAllRoomArea = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer) : 0;
+        const totalAllRoomArea = (productInput.rooms && productInput.rooms.length > 0) ? productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer) : 0;
         const availableRoomArea = area.ratio_area.room - totalAllRoomArea;
         const roomHallway = totalAllRoomArea * 0.15;
 
-        const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
+        const totalCentralArea = (productInput.centrals && productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
         const availableCentralArea = area.ratio_area.central - totalCentralArea ;
         const centralHallway = totalCentralArea * 0.20;
 
         const parkingLotQuantity = Math.floor(util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, productInput.province));
         const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
 
-        if(productInput.parking.length > 0) {
+        if(productInput.parking && productInput.parking.length > 0) {
             productInput.parking[0].noRoom = parkingLotQuantity
         }
         
-        const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
+        const totalParkingLotArea = (productInput.parking && productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
         const roadArea = totalParkingLotArea * 0.4;
 
-        const outdoorArea = (productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
+        const outdoorArea = (productInput.outdoors && productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         const availableOutdoorArea = area.percent.outdoor - outdoorArea;
         const totalOutdoorArea = outdoorArea + roadArea;
 
@@ -82,7 +82,7 @@ class Condo{
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
         const totalCorridor = roomHallway + centralHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
-        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
+        const totalRoomQuantity = (productInput.rooms && productInput.rooms.length > 0) ? productInput.rooms.map(room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = (area.availableArea * 4) - usedArea;
 
 
@@ -136,25 +136,25 @@ class Condo{
 
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-        const totalAllRoomArea = (productInput.rooms.length > 0) ? productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer) : 0;
+        const totalAllRoomArea = (productInput.rooms && productInput.rooms.length > 0) ? productInput.rooms.map(room => room.area * room.noRoom).reduce(reducer) : 0;
         const availableRoomArea = area.ratio_area.room - totalAllRoomArea;
         const roomHallway = totalAllRoomArea * 0.15;
 
-        const totalCentralArea = (productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
+        const totalCentralArea = (productInput.centrals && productInput.centrals.length > 0) ? productInput.centrals.map(facility => facility.area * facility.noRoom).reduce(reducer) : 0;
         const availableCentralArea = area.ratio_area.central - totalCentralArea ;
         const centralHallway = totalCentralArea * 0.20;
 
-        const parkingLotQuantity = Math.floor(util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, productInput.province));
-        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, productInput.province);
+        const parkingLotQuantity = Math.floor(util.condoParkingLot(productInput.rooms, totalAllRoomArea, reducer, property.product_input.wordingParking));
+        const parkingLotPercentage = util.parkingLotPercentage(parkingLotQuantity, productInput.rooms, reducer, property.product_input.wordingParking);
 
-        if(productInput.parking.length > 0) {
+        if(productInput.parking && productInput.parking.length > 0) {
             productInput.parking[0].noRoom = parkingLotQuantity
         }
-        const totalParkingLotArea = (productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
+        const totalParkingLotArea = (productInput.parking && productInput.parking.length > 0) ? productInput.parking.map(lot => lot.area * lot.noRoom).reduce(reducer) : 0;
         const availableParkingLotArea = area.percent.parking - totalParkingLotArea;
         const roadArea = totalParkingLotArea * 0.4;
 
-        const outdoorArea = (productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
+        const outdoorArea = (productInput.outdoors && productInput.outdoors.length > 0) ? productInput.outdoors.map(outdoor => outdoor.area * outdoor.noRoom).reduce(reducer) : 0;
         const availableOutdoorArea = area.percent.outdoor - outdoorArea;
         const totalOutdoorArea = outdoorArea + roadArea;
 
@@ -165,7 +165,7 @@ class Condo{
         const usedArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalParkingLotArea + roadArea + totalOutdoorArea + totalResortArea + resortHallway;
         const totalCorridor = roomHallway + centralHallway + resortHallway;
         const totalIndoorArea = totalAllRoomArea + totalCentralArea + roomHallway + centralHallway + totalResortArea + resortHallway;
-        const totalRoomQuantity = (productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
+        const totalRoomQuantity = (productInput.rooms && productInput.rooms.length > 0) ? productInput.rooms.map( room => room.noRoom).reduce(reducer) : 0;
         const remainingArea = area.availableArea - usedArea;
 
         const userProduct = {

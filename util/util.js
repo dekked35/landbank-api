@@ -24,14 +24,14 @@ class Util{
         if (!rooms.length) {
             return 0;
         }
-        if (province === 'bkk') {
-            const bigRooms = rooms.filter(room => room.area > 59).reduce(reducer);
-            const roomsByTotalArea = totalRoomArea/120;
+        if (province === 'ภายนอกกรุงเทพ') {
+            const bigRooms = (rooms.filter(room => room.area > 59).reduce(reducer))/2;
+            const roomsByTotalArea = totalRoomArea/240;
 
             return (bigRooms >= roomsByTotalArea) ? bigRooms : roomsByTotalArea;
         } else {
-            const bigRooms = (rooms.filter(room => room.area > 59).reduce(reducer))/2;
-            const roomsByTotalArea = totalRoomArea/240;
+            const bigRooms = rooms.filter(room => room.area > 59).reduce(reducer);
+            const roomsByTotalArea = totalRoomArea/120;
 
             return (bigRooms >= roomsByTotalArea) ? bigRooms : roomsByTotalArea;
         }
@@ -47,10 +47,10 @@ class Util{
 
         const bigRooms = rooms.filter(room => room.area > 59).reduce(reducer);
 
-        if (province === 'bkk') {
-            return (parkingLots * 100)/bigRooms;
+        if (province === 'ภายนอกกรุงเทพ') {
+            return (parkingLots * 100)/(bigRooms.noRoom/2);
         } else {
-            return (parkingLots * 100)/(bigRooms/2);
+            return (parkingLots * 100)/bigRooms.noRoom;
         }
     }
 }
